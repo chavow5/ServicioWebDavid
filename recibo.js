@@ -18,13 +18,13 @@ const DEFAULT_ISSUER = {
   trade: 'CHAVO',
   name: 'David Ramirez',
   subtitle: 'Web Developer',
-  phone: '+54 9 11 0000-0000',
-  location: 'Buenos Aires, Argentina',
-  city: 'Buenos Aires',
+  phone: '+54 9 3804 201334',
+  location: 'La Rioja, Argentina',
+  city: 'La Rioja',
   web: 'https://davidramirezweb.vercel.app/',
-  dni: '20-38491820-4',
-  alias: 'chavo651',
-  bank: 'Alias: chavo651\nBanco: Mercado Pago',
+  dni: '43416310',
+  alias: 'chavow5.bna',
+  bank: 'Banco Nacion Argentina',
   logo: 'assets/logo.png',
   invertLogo: true
 };
@@ -44,17 +44,17 @@ const DEFAULT_RECEIPT = {
   discountVal: 0,
   discountReason: 'Bonificación especial',
   paymentMethod: 'Transferencia Bancaria',
-  transactionRef: 'TR-984128',
+  transactionRef: '',
   notes: 'Servicio de hosting y mantenimiento web al día sin deudas pendientes.',
   includeWords: true,
   includeStamp: true,
   includeSignatures: true,
   client: {
-    name: 'Castillo, Daniel',
-    dni: '20-35890133-7',
-    phone: '11 5544-3322',
-    email: 'danielcastillo@gmail.com',
-    city: 'Capital, La Rioja'
+    name: '',
+    dni: '',
+    phone: '',
+    email: '',
+    city: ''
   },
   status: 'Cobrado'
 };
@@ -128,6 +128,12 @@ function loadSavedIssuer() {
   if (saved) {
     try {
       issuerState = { ...DEFAULT_ISSUER, ...JSON.parse(saved) };
+      if (issuerState.phone?.includes('0000-0000') || issuerState.phone === '5493804201' || !issuerState.phone) issuerState.phone = DEFAULT_ISSUER.phone;
+      if (issuerState.dni === '20-38491820-4' || !issuerState.dni) issuerState.dni = DEFAULT_ISSUER.dni;
+      if (issuerState.alias === 'david.dev.mp' || issuerState.alias === 'chavo651' || !issuerState.alias) issuerState.alias = DEFAULT_ISSUER.alias;
+      if (issuerState.bank?.includes('Mercado Pago') || !issuerState.bank) issuerState.bank = DEFAULT_ISSUER.bank;
+      if (issuerState.location?.includes('Buenos Aires') || issuerState.location?.includes('Capital') || !issuerState.location) issuerState.location = DEFAULT_ISSUER.location;
+      if (issuerState.city?.includes('Buenos Aires') || issuerState.city?.includes('Capital') || !issuerState.city) issuerState.city = DEFAULT_ISSUER.city;
     } catch (e) {
       console.error('Error reading issuer storage:', e);
     }
@@ -140,10 +146,10 @@ function loadSavedIssuer() {
 
   setVal('input-issuer-trade', issuerState.trade);
   setVal('input-issuer-name', issuerState.name);
-  setVal('input-dev-dni', issuerState.dni || '20-38491820-4');
+  setVal('input-dev-dni', issuerState.dni || '43416310');
   setVal('input-issuer-phone', issuerState.phone);
-  setVal('input-dev-city', issuerState.city || 'Buenos Aires, Argentina');
-  setVal('input-dev-alias', issuerState.alias || 'chavo651');
+  setVal('input-dev-city', issuerState.city || 'La Rioja, Argentina');
+  setVal('input-dev-alias', issuerState.alias || 'chavow5.bna');
   setVal('input-issuer-web', issuerState.web);
 
   const checkInvert = document.getElementById('check-invert-logo');
@@ -156,15 +162,24 @@ function loadSavedReceipt() {
   if (saved) {
     try {
       receiptState = { ...DEFAULT_RECEIPT, ...JSON.parse(saved) };
+      if (receiptState.client?.name === 'Castillo, Daniel') {
+        receiptState.client = { name: '', dni: '', phone: '', email: '', city: '' };
+      }
+      if (receiptState.alias === 'chavo651' || receiptState.alias === 'david.dev.mp') {
+        receiptState.alias = DEFAULT_RECEIPT.alias;
+      }
     } catch (e) {
       console.error('Error loading receipt draft:', e);
     }
   } else {
-    // If there's an active client from other modules, prefill it
+    // If there's an active client from other modules, prefill it only if not dummy
     const lastClient = localStorage.getItem(STORAGE_KEYS.LAST_CLIENT);
     if (lastClient) {
       try {
-        receiptState.client = { ...receiptState.client, ...JSON.parse(lastClient) };
+        const clientObj = JSON.parse(lastClient);
+        if (clientObj.name !== 'Castillo, Daniel') {
+          receiptState.client = { ...receiptState.client, ...clientObj };
+        }
       } catch (e) {}
     }
   }
@@ -411,13 +426,13 @@ function renderReceipt() {
   }
 
   // Client Information
-  const clientName = receiptState.client?.name || 'Castillo, Daniel';
+  const clientName = receiptState.client?.name ? receiptState.client.name.toUpperCase() : '______________________';
   const clientDni = receiptState.client?.dni || '-';
   const clientCity = receiptState.client?.city || '-';
   const clientPhone = receiptState.client?.phone || '-';
   const clientEmail = receiptState.client?.email || '-';
 
-  setElText('receipt-view-client-name', clientName.toUpperCase());
+  setElText('receipt-view-client-name', clientName);
   setElText('receipt-view-client-dni', clientDni);
   setElText('receipt-view-client-city', clientCity);
   setElText('receipt-view-client-phone', clientPhone);
@@ -497,8 +512,10 @@ function renderReceipt() {
   setElText('receipt-view-payment-method', receiptState.paymentMethod || 'Transferencia Bancaria');
   setElText('receipt-view-transaction-ref', receiptState.transactionRef || '-');
   
-  const aliasVal = issuerState.alias || 'chavo651';
+  const aliasVal = issuerState.alias || 'chavow5.bna';
+  const bankVal = issuerState.bank || 'Banco Nacion Argentina';
   setElText('receipt-view-alias', aliasVal);
+  setElText('receipt-view-bank', bankVal);
 
   const aliasBox = document.getElementById('receipt-view-alias-box');
   if (aliasBox) {
@@ -527,7 +544,7 @@ function renderReceipt() {
     if (receiptState.includeSignatures) {
       sigBox.classList.remove('hidden');
       setElText('receipt-view-sig-dev-name', (issuerState.name || 'DAVID RAMIREZ').toUpperCase());
-      setElText('receipt-view-sig-dev-dni', issuerState.dni || '20-38491820-4');
+      setElText('receipt-view-sig-dev-dni', issuerState.dni || '43416310');
     } else {
       sigBox.classList.add('hidden');
     }

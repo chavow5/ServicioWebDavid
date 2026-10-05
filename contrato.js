@@ -22,9 +22,9 @@ const DEFAULT_ISSUER = {
   web: 'https://davidramirezweb.vercel.app/',
   location: 'La Rioja, Argentina',
   city: 'La Rioja',
-  dni: '20-38491820-4',
-  alias: 'chavo651',
-  bank: 'Alias: chavo651\nBanco: Mercado Pago',
+  dni: '43416310',
+  alias: 'chavow5.bna',
+  bank: 'Banco Nacion Argentina',
   logo: 'assets/logo.png',
   invertLogo: true
 };
@@ -34,12 +34,12 @@ const DEFAULT_CONTRACT = {
   id: 'contract_' + Date.now(),
   number: 'CONTR-2026-001',
   date: new Date().toISOString().split('T')[0],
-  city: 'Buenos Aires',
+  city: 'La Rioja',
   currency: '$',
   projectUrl: 'Sitio Web Comercial • https://davidramirezweb.vercel.app/',
   monthlyFee: 45000,
   payDay: 10,
-  alias: 'chavo651',
+  alias: 'chavow5.bna',
   priceNoticeDays: 15,
   graceDays: 10,
   cancelDays: 30,
@@ -47,11 +47,11 @@ const DEFAULT_CONTRACT = {
   includeSignatures: true,
   signatureMode: 'dev', // 'dev' (solo emisor/desarrollador) | 'both' (ambos)
   client: {
-    name: 'Castillo, Daniel',
-    dni: '20-35890133-7',
-    phone: '11 5544-3322',
-    email: 'danielcastillo@gmail.com',
-    city: 'Capital, La Rioja'
+    name: '',
+    dni: '',
+    phone: '',
+    email: '',
+    city: ''
   },
   pageMargins: 'standard', // 'standard' (2.0cm sup/inf, 2.5cm lat), 'full25' (2.5cm all), 'compact' (1.8cm / 2.0cm)
   fontSize: '11pt', // '11pt', '12pt'
@@ -127,6 +127,12 @@ function loadSavedIssuer() {
   if (saved) {
     try {
       issuerState = { ...DEFAULT_ISSUER, ...JSON.parse(saved) };
+      if (issuerState.phone?.includes('0000-0000') || issuerState.phone === '5493804201' || !issuerState.phone) issuerState.phone = DEFAULT_ISSUER.phone;
+      if (issuerState.dni === '20-38491820-4' || !issuerState.dni) issuerState.dni = DEFAULT_ISSUER.dni;
+      if (issuerState.alias === 'david.dev.mp' || issuerState.alias === 'chavo651' || !issuerState.alias) issuerState.alias = DEFAULT_ISSUER.alias;
+      if (issuerState.bank?.includes('Mercado Pago') || !issuerState.bank) issuerState.bank = DEFAULT_ISSUER.bank;
+      if (issuerState.location?.includes('Buenos Aires') || issuerState.location?.includes('Capital') || !issuerState.location) issuerState.location = DEFAULT_ISSUER.location;
+      if (issuerState.city === 'Buenos Aires' || issuerState.city?.includes('Capital') || !issuerState.city) issuerState.city = DEFAULT_ISSUER.city;
     } catch (e) {
       console.error('Error reading issuer storage:', e);
     }
@@ -139,10 +145,10 @@ function loadSavedIssuer() {
 
   setVal('input-issuer-trade', issuerState.trade);
   setVal('input-issuer-name', issuerState.name);
-  setVal('input-dev-dni', issuerState.dni || '20-38491820-4');
+  setVal('input-dev-dni', issuerState.dni || '43416310');
   setVal('input-issuer-phone', issuerState.phone);
-  setVal('input-dev-city', issuerState.city || 'La Rioja');
-  setVal('input-dev-alias', issuerState.alias || 'chavo651');
+  setVal('input-dev-city', issuerState.city || 'La Rioja, Argentina');
+  setVal('input-dev-alias', issuerState.alias || 'chavow5.bna');
   setVal('input-issuer-web', issuerState.web);
 
   const checkInvert = document.getElementById('check-invert-logo');
@@ -155,16 +161,27 @@ function loadSavedContract() {
   if (saved) {
     try {
       contractState = { ...DEFAULT_CONTRACT, ...JSON.parse(saved) };
+      if (contractState.client?.name === 'Castillo, Daniel') {
+        contractState.client = { name: '', dni: '', phone: '', email: '', city: '' };
+      }
+      if (contractState.alias === 'chavo651' || contractState.alias === 'david.dev.mp') {
+        contractState.alias = DEFAULT_CONTRACT.alias;
+      }
+      if (contractState.city === 'Buenos Aires' || contractState.city?.includes('Capital')) {
+        contractState.city = DEFAULT_CONTRACT.city;
+      }
     } catch (e) {
       console.error('Error loading contract draft:', e);
     }
   } else {
-    // If there's an active client from Presupuestos, prefill it
+    // If there's an active client from Presupuestos, prefill it only if not dummy
     const lastClient = localStorage.getItem(STORAGE_KEYS.LAST_CLIENT);
     if (lastClient) {
       try {
         const clientObj = JSON.parse(lastClient);
-        contractState.client = { ...contractState.client, ...clientObj };
+        if (clientObj.name !== 'Castillo, Daniel') {
+          contractState.client = { ...contractState.client, ...clientObj };
+        }
       } catch (e) {
         // silent
       }
@@ -280,15 +297,15 @@ function renderContract() {
   setElText('contract-view-date-short', formatDate(contractState.date));
 
   // Intro Paragraph: "En [ciudad], a [fecha], entre [Tu nombre], DNI/CUIT [] y [Nombre del cliente], DNI/CUIT []"
-  const devCity = issuerState.city || 'Buenos Aires';
+  const devCity = issuerState.city || contractState.city || 'La Rioja';
   setElText('contract-view-city', devCity);
   setElText('contract-view-date-full', formatDateFull(contractState.date));
   setElText('contract-view-dev-name', issuerState.name || 'David Ramirez');
-  setElText('contract-view-dev-dni', issuerState.dni || '20-38491820-4');
+  setElText('contract-view-dev-dni', issuerState.dni || '43416310');
 
-  const clientName = contractState.client?.name || 'Castillo, Daniel';
-  const clientDni = contractState.client?.dni || '-';
-  setElText('contract-view-client-name', clientName.toUpperCase());
+  const clientName = contractState.client?.name ? contractState.client.name.toUpperCase() : '______________________';
+  const clientDni = contractState.client?.dni || '____________';
+  setElText('contract-view-client-name', clientName);
   setElText('contract-view-client-dni', clientDni);
 
   // Clause 1: Servicio
@@ -297,7 +314,7 @@ function renderContract() {
   // Clause 2: Precio
   setElText('contract-view-fee', formatCurrency(contractState.monthlyFee, currency));
   setElText('contract-view-pay-day', contractState.payDay || '10');
-  const aliasVal = issuerState.alias || contractState.alias || 'david.dev.mp';
+  const aliasVal = issuerState.alias || contractState.alias || 'chavow5.bna';
   setElText('contract-view-alias', aliasVal);
   setElText('contract-view-price-notice', contractState.priceNoticeDays || '15');
 
@@ -324,7 +341,7 @@ function renderContract() {
     if (contractState.includeSignatures) {
       sigBox.classList.remove('hidden');
       setElText('contract-view-sig-dev-name', (issuerState.name || 'DAVID RAMIREZ').toUpperCase());
-      setElText('contract-view-sig-dev-dni', issuerState.dni || '20-38491820-4');
+      setElText('contract-view-sig-dev-dni', issuerState.dni || '43416310');
 
       if (sigMode === 'both') {
         if (sigWrap) sigWrap.className = 'grid grid-cols-2 gap-16';

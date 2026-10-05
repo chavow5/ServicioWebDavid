@@ -17,10 +17,13 @@ const DEFAULT_ISSUER = {
   trade: 'CHAVO',
   name: 'David Ramirez',
   subtitle: 'Web Developer',
-  phone: '+54 9 11 0000-0000',
+  phone: '+54 9 3804 201334',
+  dni: '43416310',
   web: 'https://davidramirezweb.vercel.app/',
-  location: 'Buenos Aires, Argentina',
-  bank: 'Alias: david.dev.mp\nBanco: Mercado Pago / Santander',
+  location: 'La Rioja, Argentina',
+  city: 'La Rioja',
+  alias: 'chavow5.bna',
+  bank: 'Alias: chavow5.bna\nBanco: Banco Nacion Argentina',
   logo: 'assets/logo.png',
   invertLogo: true
 };
@@ -34,11 +37,11 @@ const DEFAULT_QUOTE = {
   currency: '$',
   paymentCond: '50% Anticipo - Saldo contra entrega',
   client: {
-    name: 'Castillo, Daniel',
-    phone: '11 5544-3322',
-    email: 'danielcastillo@gmail.com',
-    address: 'Av. San Martín 1420',
-    city: 'Capital, La Rioja'
+    name: '',
+    phone: '',
+    email: '',
+    address: '',
+    city: ''
   },
   notes: 'Desarrollo de sitio web responsive y optimización general para comercio.',
   items: [
@@ -80,6 +83,12 @@ function loadSavedIssuer() {
   if (saved) {
     try {
       issuerState = { ...DEFAULT_ISSUER, ...JSON.parse(saved) };
+      if (issuerState.phone?.includes('0000-0000') || issuerState.phone === '5493804201' || !issuerState.phone) issuerState.phone = DEFAULT_ISSUER.phone;
+      if (issuerState.dni === '20-38491820-4' || !issuerState.dni) issuerState.dni = DEFAULT_ISSUER.dni;
+      if (issuerState.alias === 'david.dev.mp' || issuerState.alias === 'chavo651' || !issuerState.alias) issuerState.alias = DEFAULT_ISSUER.alias;
+      if (issuerState.bank?.includes('Mercado Pago') || !issuerState.bank) issuerState.bank = DEFAULT_ISSUER.bank;
+      if (issuerState.location?.includes('Buenos Aires') || issuerState.location?.includes('Capital') || !issuerState.location) issuerState.location = DEFAULT_ISSUER.location;
+      if (issuerState.city?.includes('Buenos Aires') || issuerState.city?.includes('Capital') || !issuerState.city) issuerState.city = DEFAULT_ISSUER.city;
     } catch (e) {
       console.error('Error reading issuer storage:', e);
     }
@@ -108,9 +117,19 @@ function loadSavedDraft() {
   if (saved) {
     try {
       quoteState = { ...DEFAULT_QUOTE, ...JSON.parse(saved) };
+      if (quoteState.client?.name === 'Castillo, Daniel') {
+        quoteState.client = { name: '', phone: '', email: '', address: '', city: '' };
+      }
     } catch (e) {
       console.error('Error loading draft:', e);
     }
+  } else {
+    quoteState = { ...DEFAULT_QUOTE };
+  }
+  
+  const lastClient = localStorage.getItem(STORAGE_KEYS.LAST_CLIENT);
+  if (lastClient && lastClient.includes('Castillo, Daniel')) {
+    localStorage.removeItem(STORAGE_KEYS.LAST_CLIENT);
   }
 
   const setVal = (id, val) => {
@@ -215,7 +234,7 @@ function renderClientSection() {
     const el = document.getElementById(id);
     if (el) el.textContent = text || '';
   };
-  setElText('view-client-name', (quoteState.client.name || 'CONSUMIDOR FINAL').toUpperCase());
+  setElText('view-client-name', quoteState.client.name ? quoteState.client.name.toUpperCase() : '');
   setElText('view-client-phone', quoteState.client.phone || '-');
   setElText('view-client-email', quoteState.client.email || '-');
   setElText('view-client-address', quoteState.client.address || '-');
