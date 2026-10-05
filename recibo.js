@@ -12,6 +12,7 @@ const STORAGE_KEYS = {
   RECEIPTS_HISTORY: 'receipts_history_v1'
 };
 
+
 // Default Issuer Profile
 const DEFAULT_ISSUER = {
   trade: 'CHAVO',
