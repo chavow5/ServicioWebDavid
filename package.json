@@ -1,0 +1,11 @@
+{
+  "name": "presupuestos-david-ramirez",
+  "version": "1.0.0",
+  "description": "Generador de presupuestos profesionales para David Ramirez (Web Developer)",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": ["presupuestos", "cotizaciones", "invoice", "freelance"],
+  "author": "David Ramirez",
+  "license": "MIT"
+}

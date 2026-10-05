@@ -1,0 +1,12 @@
+# Editor files
+.vscode/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Node / Logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

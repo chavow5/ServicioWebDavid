@@ -1,0 +1,274 @@
+/* Custom styles and print optimizations */
+
+/* Reset & Fonts */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Dark filter for white transparent logos on white paper */
+.filter-dark {
+  filter: brightness(0);
+}
+
+.filter-invert {
+  filter: invert(1);
+}
+
+/* Paper Sheet Layout on Screen Preview (Fixed A4 proportions at 96 DPI) */
+.a4-sheet {
+  width: 794px;
+  min-height: 1123px;
+  padding: 38px 45px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  color: #000000;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: box-shadow 0.2s ease;
+}
+
+.doc-body-top {
+  width: 100%;
+}
+
+.doc-body-bottom {
+  width: 100%;
+  margin-top: auto;
+}
+
+/* Contract A4 Official Layout (210 mm x 297 mm, Márgenes 2,0-2,5 cm, Arial) */
+.contract-a4-sheet {
+  width: 794px; /* 210mm at 96 DPI */
+  min-height: 1123px; /* 297mm at 96 DPI */
+  padding: 20mm 25mm 20mm 25mm; /* Sup/Inf 2.0 cm, Izq/Der 2.5 cm para encuadernación */
+  margin: 0 auto;
+  background-color: #ffffff;
+  color: #111827;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+.contract-font-arial {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+.contract-title-a4 {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 16pt !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+}
+
+.contract-body-text {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 11pt;
+  line-height: 1.35;
+  color: #111827;
+}
+
+.contract-clause {
+  font-family: Arial, Helvetica, sans-serif !important;
+  text-align: justify;
+}
+
+.contract-clause strong {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-weight: 700;
+  color: #000000;
+}
+
+/* Argentine Comprobante Tipo X Borders */
+.doc-header-box {
+  background-color: #ffffff;
+}
+
+table th, table td {
+  border-color: #000000 !important;
+}
+
+#view-items-tbody td {
+  word-break: break-word;
+}
+
+/* Responsive Mobile Tab Switching */
+@media (max-width: 1023px) {
+  .mobile-hidden {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mobile-hidden {
+    display: block !important;
+  }
+  #panel-preview.mobile-hidden {
+    display: flex !important;
+  }
+}
+
+/* iOS Safari auto-zoom prevention: inputs must have at least 16px font-size on mobile */
+@media (max-width: 640px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="date"],
+  input[type="password"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Touch scrolling smooth */
+#preview-wrapper {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Scrollbar tweaks */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.15s ease-out forwards;
+}
+
+/* ============================================================ */
+/* PRINT STYLESHEET (@media print) - Professional A4 Guarantee  */
+/* ============================================================ */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 8mm 8mm 8mm;
+  }
+
+  html, body {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Hide entire web UI */
+  .no-print,
+  #mobile-bottom-bar,
+  header,
+  nav,
+  #panel-editor,
+  #modal-history,
+  #toast-container,
+  .btn-print-secondary,
+  .lg\:hidden {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  main {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  #panel-preview,
+  #preview-wrapper,
+  #preview-scaler {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    transform: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .a4-sheet {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 279mm !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    transform: none !important;
+  }
+
+  .doc-body-top {
+    width: 100% !important;
+  }
+
+  .doc-body-bottom {
+    width: 100% !important;
+    margin-top: auto !important;
+  }
+
+  /* Table styling preservation */
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+
+  .doc-header-box,
+  .border-2 {
+    border-width: 1.5pt !important;
+    border-color: #000000 !important;
+  }
+
+  /* Ensure gray background prints in Chrome/Edge/Firefox */
+  .bg-slate-300 {
+    background-color: #d1d5db !important;
+  }
+  
+  .bg-slate-50 {
+    background-color: #f8fafc !important;
+  }
+}

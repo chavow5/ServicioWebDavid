@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Recibos de Pago y Servicios - David Ramirez</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style id="style-receipt-print-page">
+    @media print {
+      @page {
+        size: 210mm 297mm;
+        margin: 15mm 20mm 15mm 20mm;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+  <!-- Top App Navigation Bar -->
+  <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30 no-print">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
+      <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 font-bold text-base sm:text-lg flex-shrink-0">
+          R
+        </div>
+        <div class="min-w-0">
+          <h1 class="text-sm sm:text-base font-bold leading-tight tracking-tight flex items-center gap-1.5 truncate">
+            <span>Recibos de Pago</span>
+            <span class="hidden md:inline-block text-[10px] font-medium px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/30">Comprobante</span>
+          </h1>
+          <p class="text-[11px] text-slate-400 leading-none mt-0.5 truncate hidden sm:block">David Ramirez • Web Developer</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs: Presupuestos vs Contratos vs Recibos -->
+      <div class="flex items-center bg-slate-800 p-0.5 sm:p-1 rounded-xl border border-slate-700/80 flex-shrink-0">
+        <a href="index.html" class="px-2 sm:px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5" title="Ir a Presupuestos">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span class="hidden md:inline">Presupuestos</span>
+          <span class="md:hidden">Presup.</span>
+        </a>
+        <a href="contrato.html" class="px-2 sm:px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5" title="Ir a Contratos">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          <span class="hidden md:inline">Contratos</span>
+          <span class="md:hidden">Contr.</span>
+        </a>
+        <a href="recibo.html" class="px-2 sm:px-2.5 py-1 text-xs font-bold rounded-lg bg-emerald-600 text-white shadow-sm flex items-center gap-1.5 transition" title="Recibos de Pago (Activo)">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+          <span class="hidden md:inline">Recibos</span>
+          <span class="md:hidden">Recib.</span>
+        </a>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+        <!-- New Receipt Button -->
+        <button id="btn-new-receipt" class="inline-flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white border border-slate-700 transition" title="Crear un recibo nuevo">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          <span class="hidden sm:inline">Nuevo</span>
+        </button>
+
+        <!-- Save / History Button -->
+        <button id="btn-save-receipt" class="inline-flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white border border-slate-700 transition" title="Guardar recibo en el historial">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+          <span class="hidden sm:inline">Guardar</span>
+        </button>
+
+        <!-- History Button (Protected by PIN) -->
+        <button id="btn-open-history" class="relative inline-flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white border border-slate-700 transition" title="Ver historial de recibos emitidos">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <span class="hidden sm:inline">Historial</span>
+          <span id="history-badge" class="hidden absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 text-white font-bold text-[9px] flex items-center justify-center ring-2 ring-slate-900">0</span>
+        </button>
+
+        <!-- Main Print Button -->
+        <button id="btn-print" class="inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-500 active:bg-emerald-700 shadow-sm transition" title="Imprimir o guardar como PDF">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          <span class="hidden xs:inline">Imprimir PDF</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Tab Switcher (Visible only on screens < lg) -->
+    <div class="lg:hidden bg-slate-800 border-t border-slate-700/60 px-3 py-2 flex items-center justify-center gap-2">
+      <button id="tab-btn-editor" type="button" class="flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm transition text-center flex items-center justify-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+        <span>Editar Recibo</span>
+      </button>
+      <button id="tab-btn-preview" type="button" class="flex-1 py-2 px-3 text-xs font-semibold rounded-lg bg-slate-700 text-slate-300 hover:text-white transition text-center flex items-center justify-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+        <span>Ver Hoja A4</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Responsive Grid Layout -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 lg:p-6 mb-20 lg:mb-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
+      
+      <!-- ========================================== -->
+      <!-- LEFT PANEL: EDIT FORM (Responsive Editor)  -->
+      <!-- ========================================== -->
+      <section id="panel-editor" class="w-full lg:col-span-5 space-y-4">
+        
+        <!-- Section 1: Datos del Emisor (Perfil Compartido) -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <button type="button" id="toggle-issuer-section" class="w-full px-4 py-3 bg-slate-50 hover:bg-slate-100 flex items-center justify-between transition text-left border-b border-slate-200">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">1</span>
+              <div>
+                <h3 class="text-sm font-bold text-slate-800">Datos de Tu Negocio (Emisor)</h3>
+                <p class="text-xs text-slate-500">Logo, nombre comercial, CUIT y contacto</p>
+              </div>
+            </div>
+            <svg id="issuer-arrow" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+
+          <div id="issuer-content" class="p-4 space-y-3 hidden">
+            <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+              <div class="w-16 h-14 bg-slate-100 rounded border border-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+                <img id="logo-img-preview" src="assets/logo.png" alt="Logo" class="max-h-12 max-w-full object-contain filter-dark">
+              </div>
+              <div class="flex-1 min-w-0">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Cambiar Logo</label>
+                <input type="file" id="input-logo-file" accept="image/*" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
+                <label class="flex items-center gap-1.5 mt-1.5 text-[11px] text-slate-600 cursor-pointer">
+                  <input type="checkbox" id="check-invert-logo" checked class="rounded text-emerald-600 focus:ring-emerald-500">
+                  <span>Invertir a oscuro para impresión en papel blanco</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">Nombre Comercial</label>
+                <input type="text" id="input-issuer-trade" value="CHAVO" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-semibold" placeholder="CHAVO">
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">Nombre / Razón Social</label>
+                <input type="text" id="input-issuer-name" value="David Ramirez" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500" placeholder="Tu Nombre">
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">CUIT o DNI</label>
+                <input type="text" id="input-dev-dni" value="20-38491820-4" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono" placeholder="20-xxxxxxxx-x">
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">Teléfono / WhatsApp</label>
+                <input type="text" id="input-issuer-phone" value="+54 9 11 0000-0000" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500" placeholder="+54 ...">
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">Ciudad, País</label>
+                <input type="text" id="input-dev-city" value="Buenos Aires, Argentina" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500" placeholder="Buenos Aires">
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">Alias / CBU de Cobro</label>
+                <input type="text" id="input-dev-alias" value="chavo651" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono font-bold" placeholder="tu.alias.mp">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">Sitio Web / Portfolio</label>
+                <input type="text" id="input-issuer-web" value="https://davidramirezweb.vercel.app/" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono" placeholder="https://...">
+              </div>
+            </div>
+
+            <div class="pt-2 flex justify-end">
+              <button type="button" id="btn-save-issuer-defaults" class="px-3 py-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition border border-emerald-200 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span>Guardar mis datos por defecto</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Datos del Cliente (Recibí de) -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-3">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">2</span>
+              <div>
+                <h3 class="text-sm font-bold text-slate-800">Datos de El Cliente</h3>
+                <p class="text-xs text-slate-500">Recibimos de (Nombre o Empresa)</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-medium text-slate-600 mb-0.5">Recibí(mos) de (Cliente / Empresa)</label>
+              <input type="text" id="input-client-name" value="Castillo, Daniel" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-semibold" placeholder="Nombre completo o Razón Social">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-0.5">DNI o CUIT</label>
+              <input type="text" id="input-client-dni" value="20-35890133-7" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono" placeholder="20-xxxxxxxx-x">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-0.5">Teléfono / WhatsApp</label>
+              <input type="text" id="input-client-phone" value="11 5544-3322" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500" placeholder="11 ...">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-0.5">Correo Electrónico</label>
+              <input type="email" id="input-client-email" value="danielcastillo@gmail.com" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500" placeholder="cliente@correo.com">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-0.5">Ciudad / Localidad</label>
+              <input type="text" id="input-client-city" value="Capital, La Rioja" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500" placeholder="Ciudad, Provincia">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Detalle del Cobro (Concepto, Cantidad de Meses, Monto y Descuento) -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-3">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">3</span>
+              <div>
+                <h3 class="text-sm font-bold text-slate-800">Detalle del Cobro / Servicio</h3>
+                <p class="text-xs text-slate-500">Mes pagado, cantidad de meses, monto y descuento</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Service Presets -->
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] text-slate-500">
+            <span class="font-medium whitespace-nowrap">Plantillas:</span>
+            <button type="button" class="btn-preset-receipt px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded whitespace-nowrap" data-preset="mantenimiento">Mantenimiento Web ($45k)</button>
+            <button type="button" class="btn-preset-receipt px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded whitespace-nowrap" data-preset="trimestre">Trimestre Adelantado (3 meses)</button>
+            <button type="button" class="btn-preset-receipt px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded whitespace-nowrap" data-preset="hosting">Hosting Cloud y SSL ($30k)</button>
+            <button type="button" class="btn-preset-receipt px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded whitespace-nowrap" data-preset="desarrollo">Desarrollo Web (Pago Total)</button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-0.5">Nº de Recibo</label>
+              <input type="text" id="input-receipt-number" value="REC-2026-001" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono font-semibold" placeholder="REC-2026-001">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-0.5">Fecha de Cobro</label>
+              <input type="date" id="input-receipt-date" class="w-full text-xs px-2 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
+            </div>
+
+            <!-- Concepto / Servicio -->
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-slate-700 mb-0.5">En concepto de (Servicio)</label>
+              <input type="text" id="input-service-concept" value="Abono Mensual de Mantenimiento y Hosting Web" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-medium" placeholder="Ej. Abono mensual de mantenimiento web / Desarrollo Web">
+            </div>
+
+            <!-- Período / Mes abonado -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-0.5">Período / Mes Abonado</label>
+              <input type="text" id="input-period-description" value="Mes de Octubre 2026" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500" placeholder="Ej. Mes de Octubre 2026">
+            </div>
+
+            <!-- Cantidad de Meses -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-0.5">Cantidad de Meses</label>
+              <div class="flex items-center gap-1.5">
+                <input type="number" id="input-months-count" value="1" min="1" max="60" class="w-20 text-center text-xs px-2 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono font-bold">
+                <span class="text-xs text-slate-500" id="label-months-unit">mes(es)</span>
+              </div>
+            </div>
+
+            <!-- Moneda y Monto Mensual -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-0.5">Monto por Mes ($)</label>
+              <div class="flex items-center gap-1">
+                <select id="select-receipt-currency" class="text-xs font-bold border border-slate-300 rounded px-1.5 py-1.5 bg-slate-50 focus:ring-2 focus:ring-emerald-500">
+                  <option value="$">$ (ARS)</option>
+                  <option value="USD $">USD $</option>
+                  <option value="€">€ (EUR)</option>
+                </select>
+                <input type="number" id="input-monthly-amount" value="45000" min="0" step="500" class="flex-1 text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono font-bold" placeholder="45000">
+              </div>
+            </div>
+
+            <!-- Subtotal de Meses (Calculado automáticamente) -->
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-0.5">Subtotal Bruto</label>
+              <div class="text-xs px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-lg font-mono font-bold text-slate-700" id="field-subtotal-display">
+                $ 45.000,00
+              </div>
+            </div>
+          </div>
+
+          <!-- SECCIÓN DESCUENTO: VISIBLE U OCULTO SI ES 0 -->
+          <div class="pt-3 border-t border-slate-100 bg-amber-50/50 p-3 rounded-lg border border-amber-200/60 space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-2 text-xs font-bold text-amber-900 cursor-pointer">
+                <input type="checkbox" id="check-apply-discount" class="rounded text-emerald-600 focus:ring-emerald-500">
+                <span>Aplicar Descuento / Bonificación</span>
+              </label>
+              <span class="text-[10px] text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded font-medium">Si es 0 no se muestra en el recibo</span>
+            </div>
+
+            <div id="box-discount-inputs" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 hidden">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">
+                  Monto a Descontar (<span id="symbol-discount-currency">$</span>)
+                </label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-xs font-mono font-bold text-slate-500">-</span>
+                  <input type="number" id="input-discount-val" value="0" min="0" step="any" class="w-full text-xs pl-6 pr-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono font-bold text-emerald-700" placeholder="Ej. 10">
+                </div>
+                <p class="text-[10px] text-slate-500 mt-0.5">Monto en dinero a restar (ej: 110 - 10 = 100)</p>
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Motivo del Descuento (Opcional)</label>
+                <input type="text" id="input-discount-reason" value="Bonificación especial" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500" placeholder="Ej. Bonificación cliente recurrente">
+              </div>
+            </div>
+          </div>
+
+          <!-- Medio de Pago y Datos de Transacción -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 border-t border-slate-100">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-0.5">Medio de Pago</label>
+              <select id="select-payment-method" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white font-medium">
+                <option value="Transferencia Bancaria" selected>Transferencia Bancaria (Alias / CBU)</option>
+                <option value="Mercado Pago">Mercado Pago</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Débito / Crédito">Débito / Tarjeta</option>
+                <option value="Cripto / USDT">Cripto / USDT</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-0.5">Nº de Transacción / Comprobante (Opcional)</label>
+              <input type="text" id="input-transaction-ref" value="TR-984128" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono" placeholder="Ej. Op #12345678">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-medium text-slate-600 mb-0.5">Observaciones adicionales (Opcional)</label>
+              <input type="text" id="input-receipt-notes" value="Servicio de hosting y mantenimiento web al día sin deudas pendientes." class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500" placeholder="Nota adicional...">
+            </div>
+          </div>
+
+          <!-- Opciones extras de Formato -->
+          <div class="pt-2 border-t border-slate-100 space-y-1.5">
+            <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+              <input type="checkbox" id="check-include-words-total" checked class="rounded text-emerald-600 focus:ring-emerald-500">
+              <span>Incluir importe en letras (Son: Cuarenta y cinco mil pesos...)</span>
+            </label>
+            <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+              <input type="checkbox" id="check-include-paid-stamp" checked class="rounded text-emerald-600 focus:ring-emerald-500">
+              <span>Incluir sello oficial verde de "COBRADO / PAGADO"</span>
+            </label>
+            <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+              <input type="checkbox" id="check-include-signatures" checked class="rounded text-emerald-600 focus:ring-emerald-500">
+              <span>Incluir línea de firma al pie (Solo Emisor)</span>
+            </label>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ========================================== -->
+      <!-- RIGHT PANEL: LIVE SHEET PREVIEW (A4 Print)-->
+      <!-- ========================================== -->
+      <section id="panel-preview" class="w-full lg:col-span-7 flex flex-col items-center mobile-hidden">
+        
+        <div class="w-full flex flex-wrap items-center justify-between gap-2 mb-3 no-print px-1">
+          <div class="flex items-center gap-2">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Vista Previa Hoja A4 (Recibo Oficial)</span>
+          </div>
+
+          <!-- Zoom & Fit Controls -->
+          <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-0.5 shadow-sm text-xs">
+            <button id="btn-zoom-out" type="button" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 transition" title="Reducir zoom">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+            </button>
+            <button id="btn-zoom-fit" type="button" class="px-2 py-1 rounded text-[11px] font-bold bg-emerald-100 text-emerald-700 transition" title="Ajustar al ancho de la pantalla">
+              Ajustar
+            </button>
+            <button id="btn-zoom-100" type="button" class="px-2 py-1 rounded text-[11px] font-semibold text-slate-600 hover:bg-slate-100 transition" title="Tamaño real (100%)">
+              100%
+            </button>
+            <button id="btn-zoom-in" type="button" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 transition" title="Aumentar zoom">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="btn-print-secondary" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              <span>Imprimir / Guardar PDF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- The Printable Document Container Wrapper -->
+        <div id="preview-wrapper" class="w-full flex justify-center overflow-x-auto overflow-y-hidden pb-4 transition-all duration-150">
+          <div id="preview-scaler" class="transition-transform duration-150 origin-top flex-shrink-0">
+            
+            <!-- The Printable Document Container (A4 Sheet: 210 x 297 mm) -->
+            <div id="print-area" class="a4-sheet bg-white shadow-xl text-slate-900 select-text p-[40px_45px]">
+              
+              <!-- TOP SECTION: HEADER, CLIENT & PAYMENT DETAILS -->
+              <div class="doc-body-top space-y-4">
+                
+                <!-- Header Box (Double Border Comprobante Tipo X / Recibo) -->
+                <div class="border-2 border-black grid grid-cols-12 relative bg-white">
+                  
+                  <!-- Left Header: Issuer Info & Logo -->
+                  <div class="col-span-5 p-3 flex flex-col justify-between border-r border-black">
+                    <div class="flex items-start gap-2.5">
+                      <div class="w-16 h-12 flex items-center justify-center flex-shrink-0">
+                        <img id="receipt-view-issuer-logo" src="assets/logo.png" alt="Logo" class="max-h-12 max-w-full object-contain filter-dark">
+                      </div>
+                      <div class="leading-tight">
+                        <h2 id="receipt-view-issuer-trade" class="text-base font-black tracking-tight uppercase text-black">CHAVO</h2>
+                        <p id="receipt-view-issuer-name" class="text-xs font-bold text-slate-800 uppercase">David Ramirez</p>
+                        <p class="text-[10px] text-slate-600 font-semibold">Web Developer</p>
+                      </div>
+                    </div>
+                    <div class="mt-2 text-[10px] text-slate-800 leading-tight space-y-0.5 font-sans">
+                      <p id="receipt-view-issuer-location" class="font-medium">BUENOS AIRES, ARGENTINA</p>
+                      <p id="receipt-view-issuer-phone" class="font-bold">TEL: +54 9 11 0000-0000</p>
+                      <p id="receipt-view-issuer-dni" class="font-mono">CUIT/DNI: 20-38491820-4</p>
+                      <p id="receipt-view-issuer-web" class="text-slate-600">https://davidramirezweb.vercel.app/</p>
+                    </div>
+                  </div>
+
+                  <!-- Center Badge Box: RECIBO "X" -->
+                  <div class="col-span-2 flex flex-col items-center justify-center border-r border-black bg-white px-1 py-2 text-center">
+                    <div class="w-12 h-12 border-2 border-black flex items-center justify-center font-black text-2xl leading-none text-black bg-slate-50">
+                      X
+                    </div>
+                    <span class="text-[8px] font-black uppercase mt-1 tracking-tighter leading-none text-slate-700">DOCUMENTO</span>
+                    <span class="text-[8px] font-black uppercase tracking-tighter leading-none text-slate-700">NO VÁLIDO</span>
+                    <span class="text-[8px] font-black uppercase tracking-tighter leading-none text-slate-700">COMO FACTURA</span>
+                    <span class="text-[9px] font-bold text-emerald-700 mt-1 uppercase tracking-tight">RECIBO</span>
+                  </div>
+
+                  <!-- Right Header: Title, Number, Date, Status -->
+                  <div class="col-span-5 p-3 flex flex-col justify-between text-right">
+                    <div>
+                      <h2 class="text-xl font-black tracking-wider uppercase text-black leading-tight">RECIBO DE PAGO</h2>
+                      <p class="text-[10px] font-bold text-slate-600 uppercase tracking-wide">COMPROBANTE DE COBRO</p>
+                      <p class="text-base font-mono font-black text-black mt-1">
+                        <span id="receipt-view-number">REC-2026-001</span>
+                      </p>
+                    </div>
+                    <div class="space-y-1 mt-2">
+                      <p class="text-[10px] font-bold text-black font-sans">
+                        FECHA: <span id="receipt-view-date" class="font-mono">05/10/2026</span>
+                      </p>
+                      <!-- Paid Stamp Badge -->
+                      <div id="receipt-view-stamp" class="pt-1">
+                        <span class="inline-block px-2.5 py-0.5 rounded text-[11px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border-2 border-emerald-600">
+                          ✓ COBRADO / PAGADO
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Client Information Box -->
+                <div class="border-2 border-t-0 border-black p-3 text-xs leading-relaxed bg-slate-50">
+                  <div class="grid grid-cols-12 gap-2">
+                    <div class="col-span-12 sm:col-span-7">
+                      <span class="text-slate-500 font-semibold text-[10px] uppercase">Recibí(mos) de:</span>
+                      <p id="receipt-view-client-name" class="font-bold text-black text-sm uppercase">CASTILLO, DANIEL</p>
+                      <p id="receipt-view-client-city" class="text-slate-700 text-[11px]">Capital, La Rioja</p>
+                    </div>
+                    <div class="col-span-12 sm:col-span-5 sm:text-right space-y-0.5">
+                      <p class="text-[11px]"><span class="text-slate-500 font-semibold">DNI/CUIT:</span> <strong id="receipt-view-client-dni" class="font-mono text-black">20-35890133-7</strong></p>
+                      <p class="text-[11px]"><span class="text-slate-500 font-semibold">Teléfono:</span> <span id="receipt-view-client-phone" class="text-slate-800">11 5544-3322</span></p>
+                      <p class="text-[11px]"><span class="text-slate-500 font-semibold">Email:</span> <span id="receipt-view-client-email" class="text-slate-700">danielcastillo@gmail.com</span></p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Main Items / Details Table -->
+                <div class="border-2 border-black overflow-hidden">
+                  <table class="w-full text-xs text-left border-collapse">
+                    <thead>
+                      <tr class="bg-black text-white font-bold uppercase tracking-wider text-[11px]">
+                        <th class="p-2.5 border-r border-slate-700">Descripción / Concepto</th>
+                        <th class="p-2.5 border-r border-slate-700 w-36">Período</th>
+                        <th class="p-2.5 border-r border-slate-700 w-24 text-center">Cantidad</th>
+                        <th class="p-2.5 border-r border-slate-700 w-32 text-right">Monto Unit.</th>
+                        <th class="p-2.5 w-32 text-right">Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-black bg-white">
+                      <tr>
+                        <td class="p-3 border-r border-black align-top">
+                          <p id="receipt-view-concept" class="font-bold text-black text-xs">Abono Mensual de Mantenimiento y Hosting Web</p>
+                          <p id="receipt-view-concept-sub" class="text-[10.5px] text-slate-600 mt-0.5">Incluye actualización, hosting cloud, certificado SSL y soporte técnico.</p>
+                        </td>
+                        <td class="p-3 border-r border-black align-top font-medium" id="receipt-view-period">
+                          Mes de Octubre 2026
+                        </td>
+                        <td class="p-3 border-r border-black text-center align-top font-mono font-bold" id="receipt-view-months">
+                          1 mes
+                        </td>
+                        <td class="p-3 border-r border-black text-right align-top font-mono" id="receipt-view-unit-price">
+                          $ 45.000,00
+                        </td>
+                        <td class="p-3 text-right align-top font-mono font-bold text-black" id="receipt-view-row-subtotal">
+                          $ 45.000,00
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Payment Method & Transaction Reference Box -->
+                <div class="border-2 border-black p-3 bg-white grid grid-cols-12 gap-3 text-xs">
+                  <div class="col-span-7 space-y-1">
+                    <p class="text-[11px] font-semibold text-slate-600 uppercase tracking-wide">Forma de Pago:</p>
+                    <p class="font-bold text-black text-xs flex items-center gap-1.5">
+                      <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+                      <span id="receipt-view-payment-method">Transferencia Bancaria</span>
+                    </p>
+                    <p class="text-[11px] text-slate-700" id="receipt-view-alias-box">
+                      Alias de cobro: <strong id="receipt-view-alias" class="font-mono text-black">chavo651</strong> (Mercado Pago)
+                    </p>
+                  </div>
+                  <div class="col-span-5 text-right space-y-1">
+                    <p class="text-[11px] font-semibold text-slate-600 uppercase tracking-wide">Comprobante / Ref:</p>
+                    <p class="font-mono font-bold text-slate-900 text-xs" id="receipt-view-transaction-ref">
+                      TR-984128
+                    </p>
+                    <p class="text-[10px] text-emerald-700 font-bold uppercase" id="receipt-view-status-label">
+                      Estado: Cancelado / Al Día
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Notes / Remarks (Optional) -->
+                <div id="receipt-view-notes-box" class="p-2.5 bg-slate-50 border border-slate-300 rounded text-[11px] text-slate-700 italic">
+                  <span class="font-bold not-italic text-slate-800">Nota:</span>
+                  <span id="receipt-view-notes">Servicio de hosting y mantenimiento web al día sin deudas pendientes.</span>
+                </div>
+
+              </div> <!-- /doc-body-top -->
+
+              <!-- PINNED BOTTOM SECTION: TOTALS & SIGNATURES (ALWAYS AT BOTTOM OF A4) -->
+              <div class="doc-body-bottom mt-auto pt-6 space-y-4">
+                
+                <!-- Words Total ("Son: ...") -->
+                <div id="receipt-view-words-box" class="p-2.5 border-2 border-black bg-slate-50 text-xs">
+                  <span class="font-bold text-black uppercase">Son:</span>
+                  <span id="receipt-view-words" class="font-medium text-slate-800">Cuarenta y cinco mil pesos con 00/100</span>
+                </div>
+
+                <!-- Totals Breakdown Box -->
+                <div class="flex justify-end">
+                  <div class="w-72 border-2 border-black divide-y-2 divide-black text-xs font-sans">
+                    
+                    <!-- Subtotal Row -->
+                    <div class="flex justify-between p-2 bg-slate-50">
+                      <span class="font-bold text-slate-700 uppercase">Subtotal (<span id="receipt-view-total-months">1 mes</span>):</span>
+                      <span id="receipt-view-subtotal" class="font-mono font-bold text-black">$ 45.000,00</span>
+                    </div>
+
+                    <!-- Discount Row: ONLY VISIBLE IF DISCOUNT > 0; HIDDEN IF 0 -->
+                    <div id="receipt-view-discount-row" class="hidden flex justify-between p-2 bg-amber-50 text-amber-900">
+                      <span class="font-bold uppercase flex items-center gap-1">
+                        <span>Descuento</span>
+                        <span id="receipt-view-discount-badge" class="text-[10px] font-normal text-amber-700 font-mono"></span>:
+                      </span>
+                      <span id="receipt-view-discount-amount" class="font-mono font-bold text-emerald-700">- $ 0,00</span>
+                    </div>
+
+                    <!-- Total Paid Row (Prominent) -->
+                    <div class="flex justify-between p-2.5 bg-black text-white text-sm font-black">
+                      <span class="uppercase tracking-wider">TOTAL PAGADO:</span>
+                      <span id="receipt-view-total" class="font-mono text-base font-black">$ 45.000,00</span>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- Signatures Box: Solo Emisor -->
+                <div id="receipt-view-signatures-box" class="flex justify-end pt-8 pb-2">
+                  <div class="w-72 text-center font-sans">
+                    <div class="border-t-2 border-black pt-2">
+                      <p class="font-bold text-xs uppercase text-black" id="receipt-view-sig-dev-name">DAVID RAMIREZ</p>
+                      <p class="text-[11px] text-slate-700 font-semibold uppercase">FIRMA DEL EMISOR / RECIBÍ CONFORME</p>
+                      <p class="text-[10px] text-slate-600 font-mono">DNI/CUIT: <span id="receipt-view-sig-dev-dni">20-38491820-4</span></p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bottom Document Watermark / Legal Notice -->
+                <div class="text-center text-[9px] text-slate-400 uppercase tracking-widest font-mono border-t border-slate-200 pt-2">
+                  Recibo de Pago de Servicios Web • David Ramirez • https://davidramirezweb.vercel.app/
+                </div>
+
+              </div> <!-- /doc-body-bottom -->
+
+            </div> <!-- /print-area -->
+          </div>
+        </div>
+
+        <!-- Mobile Return to Editor & Print Buttons -->
+        <div class="w-full mt-4 lg:hidden flex items-center justify-center gap-3 no-print">
+          <button id="btn-back-to-editor" type="button" class="flex-1 py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-bold rounded-xl shadow-sm flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            <span>Volver al Formulario</span>
+          </button>
+          <button id="btn-print-mobile-view" type="button" class="flex-1 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-sm flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            <span>Imprimir PDF</span>
+          </button>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Mobile Sticky Bottom Bar -->
+  <aside id="mobile-bottom-bar" class="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2.5 z-20 shadow-lg flex items-center justify-between no-print transition-all">
+    <div class="leading-tight">
+      <span class="text-[10px] text-slate-500 uppercase font-semibold">Total Pagado</span>
+      <p id="mobile-bar-total" class="text-sm font-black font-mono text-emerald-700">$ 45.000,00</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <button id="btn-mobile-preview-shortcut" type="button" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+        <span>Ver A4</span>
+      </button>
+      <button id="btn-mobile-save-shortcut" type="button" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-sm transition flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+        <span>Guardar</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========================================== -->
+  <!-- MODAL: HISTORIAL DE RECIBOS CON PIN        -->
+  <!-- ========================================== -->
+  <div id="modal-history" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm hidden animate-fade-in no-print">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold leading-tight">Historial de Recibos Emitidos</h3>
+            <p class="text-[11px] text-slate-400">Protegido por PIN de seguridad</p>
+          </div>
+        </div>
+        <button id="btn-close-history" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Modal Body 1: PIN Unlock Form -->
+      <div id="history-pin-container" class="p-6 sm:p-8 flex flex-col items-center justify-center text-center space-y-4">
+        <div class="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        </div>
+        <div class="max-w-sm">
+          <h4 class="text-base font-bold text-slate-800">Ingresá tu PIN de Seguridad</h4>
+          <p class="text-xs text-slate-500 mt-1">Este historial contiene recibos y montos cobrados.</p>
+        </div>
+        <div class="w-full max-w-xs space-y-3">
+          <input type="password" id="input-security-pin" maxlength="6" class="w-full text-center text-xl tracking-widest font-mono px-3 py-2 border-2 border-slate-300 rounded-xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20" placeholder="••••">
+          <p id="pin-error-msg" class="text-xs text-rose-600 font-medium hidden">PIN incorrecto. Intentá nuevamente.</p>
+          <button id="btn-unlock-history" type="button" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition">
+            Desbloquear Historial
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Body 2: Receipts List -->
+      <div id="history-list-container" class="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 hidden">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-700" id="history-count-label">0 recibos guardados</span>
+          <div class="flex items-center gap-2">
+            <button id="btn-clear-history" type="button" class="text-xs text-rose-600 hover:text-rose-700 font-semibold px-2 py-1 rounded hover:bg-rose-50 transition">
+              Vaciar Historial
+            </button>
+          </div>
+        </div>
+        <div id="history-items-list" class="space-y-2">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none no-print"></div>
+
+  <!-- Scripts -->
+  <script src="recibo.js"></script>
+</body>
+</html>

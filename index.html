@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Presupuestos | David Ramirez</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+  <!-- Top App Navigation Bar -->
+  <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30 no-print">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
+      <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-400 font-bold text-base sm:text-lg flex-shrink-0">
+          P
+        </div>
+        <div class="min-w-0">
+          <h1 class="text-sm sm:text-base font-bold leading-tight tracking-tight flex items-center gap-1.5 truncate">
+            <span>Presupuestos</span>
+            <span class="hidden md:inline-block text-[10px] font-medium px-1.5 py-0.5 bg-sky-500/20 text-sky-300 rounded-full border border-sky-500/30">Freelance</span>
+          </h1>
+          <p class="text-[11px] text-slate-400 leading-none mt-0.5 truncate hidden sm:block">David Ramirez • Web Developer</p>
+        </div>
+      </div>
+
+      <!-- Document Navigation Links (Presupuestos vs Contratos vs Recibos) -->
+      <div class="flex items-center bg-slate-800 p-0.5 sm:p-1 rounded-xl border border-slate-700/80 flex-shrink-0">
+        <a href="index.html" class="px-2 sm:px-2.5 py-1 text-xs font-bold rounded-lg bg-sky-600 text-white shadow-sm flex items-center gap-1.5 transition" title="Generador de Presupuestos (Activo)">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span class="hidden md:inline">Presupuestos</span>
+          <span class="md:hidden">Presup.</span>
+        </a>
+        <a href="contrato.html" class="px-2 sm:px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5" title="Ir a Contratos de Servicios">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          <span class="hidden md:inline">Contratos</span>
+          <span class="md:hidden">Contr.</span>
+        </a>
+        <a href="recibo.html" class="px-2 sm:px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5" title="Ir a Recibos de Pago">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+          <span class="hidden md:inline">Recibos</span>
+          <span class="md:hidden">Recib.</span>
+        </a>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+        <!-- New Quote Button -->
+        <button id="btn-new-quote" class="inline-flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white border border-slate-700 transition" title="Crear un presupuesto nuevo en blanco">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          <span class="hidden sm:inline">Nuevo</span>
+        </button>
+
+        <!-- Save Quote Button -->
+        <button id="btn-save-quote" class="inline-flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold bg-sky-600 text-white hover:bg-sky-500 shadow-sm transition" title="Guardar presupuesto actual en el historial">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+          <span class="hidden sm:inline">Guardar</span>
+        </button>
+
+        <!-- History Button (Protected with PIN) -->
+        <button id="btn-open-history" class="inline-flex items-center justify-center gap-1.5 px-2.5 py-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/30 transition" title="Ver historial protegido por PIN">
+          <svg class="w-4 h-4 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <span class="hidden sm:inline">Historial</span>
+          <span id="badge-history-count" class="bg-amber-400/20 text-amber-200 text-[10px] px-1.5 py-0.5 rounded-full font-mono">0</span>
+        </button>
+
+        <!-- Print / PDF Button -->
+        <button id="btn-print-main" class="inline-flex items-center justify-center gap-1.5 px-3 py-2 sm:px-3.5 sm:py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-500 shadow-md hover:shadow-lg transition transform active:scale-95" title="Imprimir o Descargar en PDF">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          <span class="hidden sm:inline">Imprimir / PDF</span>
+          <span class="sm:hidden font-bold">PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile View Selector Tabs (Visible on screens < lg) -->
+  <nav aria-label="Selector de vista móvil" class="lg:hidden bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 py-2 flex items-center justify-center gap-2 sticky top-16 z-20 no-print shadow-sm">
+    <button id="tab-btn-editor" type="button" class="flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-sky-50 text-sky-700 border border-sky-200 shadow-sm transition text-center flex items-center justify-center gap-1.5">
+      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+      <span>Formulario</span>
+    </button>
+    <button id="tab-btn-preview" type="button" class="flex-1 py-2 px-3 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition text-center flex items-center justify-center gap-1.5">
+      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      <span>Vista Previa A4</span>
+    </button>
+  </nav>
+
+  <!-- Main Content Area: Split View -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 lg:p-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- ========================================== -->
+      <!-- LEFT PANEL: EDITOR FORM (Inputs & Config) -->
+      <!-- ========================================== -->
+      <section id="panel-editor" class="w-full lg:col-span-5 space-y-5 no-print pb-24 lg:pb-0">
+        
+        <!-- Accordion 1: Mis Datos / Emisor -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden transition">
+          <div class="p-4 bg-slate-50/80 border-b border-slate-200 flex items-center justify-between cursor-pointer select-none" id="toggle-issuer-section">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center font-bold text-xs">1</span>
+              <div>
+                <h3 class="text-sm font-bold text-slate-800">Mis Datos Comerciales (Emisor)</h3>
+                <p class="text-xs text-slate-500">Logo, nombre, teléfono y contacto</p>
+              </div>
+            </div>
+            <button type="button" class="text-slate-400 hover:text-slate-600 p-1">
+              <svg id="issuer-arrow" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+          </div>
+
+          <div id="issuer-content" class="p-4 space-y-4">
+            <!-- Logo Uploader & Options -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5">Logo del Negocio / Marca</label>
+              <div class="flex items-center gap-3">
+                <div class="w-20 h-16 bg-slate-100 rounded-lg border border-dashed border-slate-300 flex items-center justify-center overflow-hidden relative group" id="logo-preview-box">
+                  <img id="logo-img-preview" src="assets/logo.png" alt="Logo preview" class="max-w-full max-h-full object-contain filter-dark">
+                </div>
+                <div class="flex-1 space-y-1.5">
+                  <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg border border-slate-300 transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <span>Subir nuevo logo</span>
+                    <input type="file" id="input-logo-file" accept="image/*" class="hidden">
+                  </label>
+                  <div class="flex items-center gap-2 mt-1">
+                    <label class="flex items-center gap-1.5 text-[11px] text-slate-600 cursor-pointer">
+                      <input type="checkbox" id="check-invert-logo" checked class="rounded text-sky-600 focus:ring-sky-500">
+                      <span>Ajustar a negro (para fondo blanco)</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Nombre Comercial / Marca</label>
+                <input type="text" id="input-issuer-trade" value="CHAVO" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" placeholder="Ej. CHAVO">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Tu Nombre Completo</label>
+                <input type="text" id="input-issuer-name" value="David Ramirez" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" placeholder="David Ramirez">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Rubro / Especialidad</label>
+                <input type="text" id="input-issuer-subtitle" value="Web Developer" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" placeholder="Web Developer">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Teléfono / WhatsApp</label>
+                <input type="text" id="input-issuer-phone" value="+54 9 11 0000-0000" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" placeholder="Ej. +54 9 11 ...">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Sitio Web / Portfolio</label>
+                <input type="text" id="input-issuer-web" value="https://davidramirezweb.vercel.app/" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" placeholder="https://...">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Ubicación / Ciudad</label>
+                <input type="text" id="input-issuer-location" value="Buenos Aires, Argentina" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" placeholder="Buenos Aires, Argentina">
+              </div>
+            </div>
+
+            <!-- Datos bancarios / alias para cobro -->
+            <div class="pt-2 border-t border-slate-100">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Datos Bancarios para Pago / Transferencia (Opcional)</label>
+              <textarea id="input-issuer-bank" rows="2" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono" placeholder="Alias: david.dev.mp &#10;CBU: 00000031000... (Mercado Pago / Banco)">Alias: david.dev.mp&#10;Banco: Mercado Pago / Santander</textarea>
+            </div>
+            
+            <button type="button" id="btn-save-issuer-defaults" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition border border-slate-200">
+              Guardar como mis datos por defecto
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 2: Datos del Presupuesto & Cliente -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">2</span>
+              <div>
+                <h3 class="text-sm font-bold text-slate-800">Presupuesto y Cliente</h3>
+                <p class="text-xs text-slate-500">Folio, fechas y destinatario</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-1">
+              <span class="text-[11px] font-semibold text-slate-500">Moneda:</span>
+              <select id="select-currency" class="text-xs font-bold border border-slate-300 rounded px-1.5 py-1 bg-slate-50 focus:ring-2 focus:ring-sky-500">
+                <option value="$">$ (ARS)</option>
+                <option value="USD $">USD $</option>
+                <option value="€">€ (EUR)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Nº Comprobante</label>
+              <input type="text" id="input-quote-number" value="00005-00001601" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 font-mono font-semibold" placeholder="00001-00000001">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Fecha Emisión</label>
+              <input type="date" id="input-quote-date" class="w-full text-xs px-2 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Validez / Vto.</label>
+              <input type="date" id="input-quote-due-date" class="w-full text-xs px-2 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500">
+            </div>
+          </div>
+
+          <!-- Datos del cliente -->
+          <div class="space-y-2.5 pt-2 border-t border-slate-100">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500">Datos del Cliente</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">Señor/es (Cliente / Empresa)</label>
+                <input type="text" id="input-client-name" value="Castillo, Daniel" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="Nombre del cliente">
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">Condición de Pago</label>
+                <input type="text" id="input-quote-payment-condition" value="50% Anticipo - Saldo contra entrega" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="Ej. Contado / 50% anticipo">
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">Teléfono / WhatsApp</label>
+                <input type="text" id="input-client-phone" value="11 5544-3322" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="Teléfono del cliente">
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">Correo Electrónico</label>
+                <input type="email" id="input-client-email" value="danielcastillo@gmail.com" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="Email opcional">
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">Domicilio / Dirección</label>
+                <input type="text" id="input-client-address" value="Av. San Martín 1420" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="Dirección">
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">Localidad / Provincia</label>
+                <input type="text" id="input-client-city" value="Capital, La Rioja" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="Ciudad, Provincia">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-medium text-slate-600 mb-0.5">Observaciones Generales</label>
+              <textarea id="input-quote-notes" rows="2" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="Aclaraciones, detalles del servicio o lugar de ejecución...">Desarrollo de sitio web responsive y optimización general para comercio.</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Ítems y Servicios -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-3">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs">3</span>
+              <div>
+                <h3 class="text-sm font-bold text-slate-800">Ítems a Cotizar</h3>
+                <p class="text-xs text-slate-500">Servicios, mano de obra o productos</p>
+              </div>
+            </div>
+            <button type="button" id="btn-add-item" class="inline-flex items-center gap-1 px-2.5 py-1 bg-sky-50 hover:bg-sky-100 text-sky-700 text-xs font-bold rounded-lg border border-sky-200 transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span>Agregar Ítem</span>
+            </button>
+          </div>
+
+          <!-- Quick Templates for David -->
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] text-slate-500">
+            <span class="font-medium whitespace-nowrap">Plantillas rápidas:</span>
+            <button type="button" class="btn-preset-item px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded whitespace-nowrap" data-desc="Desarrollo de Sitio Web Responsive" data-price="250000">Web Completa</button>
+            <button type="button" class="btn-preset-item px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded whitespace-nowrap" data-desc="Diseño de Landing Page y Formulario" data-price="120000">Landing Page</button>
+            <button type="button" class="btn-preset-item px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded whitespace-nowrap" data-desc="Mantenimiento Web y Soporte Mensual" data-price="45000">Mantenimiento</button>
+          </div>
+
+          <!-- Dynamic Item Rows Container -->
+          <div id="items-editor-container" class="space-y-2.5">
+            <!-- Dynamically populated via JS -->
+          </div>
+
+          <!-- Totales & Descuentos adicionales -->
+          <div class="pt-3 border-t border-slate-100 space-y-2">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-1">Descuento Global (%)</label>
+                <input type="number" id="input-global-discount" value="0" min="0" max="100" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="0">
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-1">Seña / Anticipo (%)</label>
+                <input type="number" id="input-advance-percentage" value="50" min="0" max="100" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="50">
+              </div>
+            </div>
+            <label class="flex items-center gap-2 text-xs text-slate-600 cursor-pointer pt-1">
+              <input type="checkbox" id="check-show-advance" checked class="rounded text-sky-600 focus:ring-sky-500">
+              <span>Mostrar desglose de Seña/Anticipo y Saldo en el comprobante</span>
+            </label>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ========================================== -->
+      <!-- RIGHT PANEL: LIVE SHEET PREVIEW (A4 Print)-->
+      <!-- ========================================== -->
+      <section id="panel-preview" class="w-full lg:col-span-7 flex flex-col items-center mobile-hidden">
+        
+        <div class="w-full flex flex-wrap items-center justify-between gap-2 mb-3 no-print px-1">
+          <div class="flex items-center gap-2">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Vista Previa Hoja A4</span>
+          </div>
+
+          <!-- Zoom & Fit Controls -->
+          <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-0.5 shadow-sm text-xs">
+            <button id="btn-zoom-out" type="button" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 transition" title="Reducir zoom">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+            </button>
+            <button id="btn-zoom-fit" type="button" class="px-2 py-1 rounded text-[11px] font-bold bg-sky-100 text-sky-700 transition" title="Ajustar al ancho de la pantalla">
+              Ajustar
+            </button>
+            <button id="btn-zoom-100" type="button" class="px-2 py-1 rounded text-[11px] font-semibold text-slate-600 hover:bg-slate-100 transition" title="Tamaño real (100%)">
+              100%
+            </button>
+            <button id="btn-zoom-in" type="button" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 transition" title="Aumentar zoom">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="btn-print-secondary" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              <span>Imprimir / Guardar PDF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- The Printable Document Container Wrapper -->
+        <div id="preview-wrapper" class="w-full flex justify-center overflow-x-auto overflow-y-hidden pb-4 transition-all duration-150">
+          <div id="preview-scaler" class="transition-transform duration-150 origin-top flex-shrink-0">
+            <!-- The Printable Document Container (Styled exactly as referencia-diseno.png) -->
+            <div id="print-area" class="a4-sheet bg-white shadow-xl rounded-sm border border-slate-300 text-slate-900 select-text">
+              
+              <!-- Top Document Section (Header, Client, Items) -->
+              <div class="doc-body-top space-y-2">
+                  
+                  <!-- Outer Double Border Box for Header -->
+                  <div class="doc-header-box border-2 border-black grid grid-cols-12 relative">
+              
+                    <!-- Left Header: Issuer Info & Logo -->
+                    <div class="col-span-5 p-3 flex flex-col justify-between border-r border-black">
+                      <div class="flex items-start gap-2.5">
+                        <div class="w-20 h-14 flex items-center justify-center flex-shrink-0">
+                          <img id="view-issuer-logo" src="assets/logo.png" alt="Logo" class="max-h-14 max-w-full object-contain filter-dark">
+                        </div>
+                        <div class="leading-tight">
+                          <h2 id="view-issuer-trade" class="text-lg font-black tracking-tight uppercase text-black">CHAVO</h2>
+                          <p id="view-issuer-name" class="text-xs font-bold text-slate-800 uppercase">David Ramirez</p>
+                          <p id="view-issuer-subtitle" class="text-[11px] font-semibold text-slate-600">Web Developer</p>
+                        </div>
+                      </div>
+                      <div class="mt-2 text-[10px] text-slate-800 leading-tight space-y-0.5">
+                        <p id="view-issuer-location" class="font-medium">BUENOS AIRES, ARGENTINA</p>
+                        <p id="view-issuer-phone" class="font-bold">TEL: +54 9 11 0000-0000</p>
+                        <p id="view-issuer-web" class="text-slate-600">https://davidramirezweb.vercel.app/</p>
+                      </div>
+                    </div>
+
+                    <!-- Center Box: "X" (Documento no válido como factura) -->
+                    <div class="col-span-2 flex flex-col items-center justify-center border-r border-black bg-white px-1 py-2 text-center">
+                      <div class="w-12 h-12 border-2 border-black flex items-center justify-center font-black text-3xl leading-none text-black">
+                        X
+                      </div>
+                      <span class="text-[8px] font-black uppercase mt-1 tracking-tighter leading-none text-slate-700">DOCUMENTO NO VÁLIDO</span>
+                      <span class="text-[8px] font-black uppercase tracking-tighter leading-none text-slate-700">COMO FACTURA</span>
+                      <span class="text-[9px] font-mono font-bold mt-1 text-slate-500">CÓD. 099</span>
+                    </div>
+
+                    <!-- Right Header: Title, Number, Date -->
+                    <div class="col-span-5 p-3 flex flex-col justify-between text-right">
+                      <div>
+                        <h2 class="text-xl font-black tracking-wider uppercase text-black">PRESUPUESTO</h2>
+                        <p class="text-sm font-mono font-bold text-black mt-0.5">
+                          <span id="view-quote-number">Nº 00005-00001601</span>
+                        </p>
+                        <p class="text-xs font-bold text-black mt-1">
+                          FECHA: <span id="view-quote-date" class="font-mono">14/09/2026</span>
+                        </p>
+                      </div>
+                      <div class="text-[10px] text-slate-700 space-y-0.5 mt-2">
+                        <p class="font-semibold">SERVICIOS PROFESIONALES FREELANCE</p>
+                        <p>VALIDEZ HASTA: <span id="view-quote-due-date" class="font-mono font-bold text-black">29/09/2026</span></p>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- Client Information Box -->
+                  <div class="border-2 border-t-0 border-black p-2.5 text-[11px] leading-relaxed">
+                    <div class="grid grid-cols-12 gap-x-2 gap-y-1">
+                      <div class="col-span-7">
+                        <span class="font-bold text-black">SEÑOR/ES:</span>
+                        <span id="view-client-name" class="font-semibold text-slate-900 ml-1 uppercase">CASTILLO, DANIEL</span>
+                      </div>
+                      <div class="col-span-5">
+                        <span class="font-bold text-black">CONDICION PAGO:</span>
+                        <span id="view-payment-cond" class="text-slate-800 ml-1">50% Anticipo - Saldo contra entrega</span>
+                      </div>
+
+                      <div class="col-span-7">
+                        <span class="font-bold text-black">DOMICILIO:</span>
+                        <span id="view-client-address" class="text-slate-800 ml-1">Av. San Martín 1420</span>
+                      </div>
+                      <div class="col-span-5">
+                        <span class="font-bold text-black">LOCALIDAD / PROV:</span>
+                        <span id="view-client-city" class="text-slate-800 ml-1">Capital, La Rioja</span>
+                      </div>
+
+                      <div class="col-span-7">
+                        <span class="font-bold text-black">TELÉFONO / WA:</span>
+                        <span id="view-client-phone" class="text-slate-800 ml-1 font-mono">11 5544-3322</span>
+                      </div>
+                      <div class="col-span-5">
+                        <span class="font-bold text-black">CORREO:</span>
+                        <span id="view-client-email" class="text-slate-800 ml-1">danielcastillo@gmail.com</span>
+                      </div>
+
+                      <div class="col-span-12">
+                        <span class="font-bold text-black">RESPONSABLE:</span>
+                        <span id="view-issuer-contact-name" class="text-slate-800 ml-1 uppercase font-semibold">DAVID RAMIREZ</span>
+                      </div>
+                    </div>
+
+                    <!-- Observaciones -->
+                    <div class="mt-1.5 pt-1 border-t border-dashed border-slate-300 text-[10px]">
+                      <span class="font-bold text-black uppercase">OBSERVACIONES:</span>
+                      <span id="view-quote-notes" class="text-slate-700 ml-1">Desarrollo de sitio web responsive y optimización general para comercio.</span>
+                    </div>
+                  </div>
+
+                  <!-- Items Table (Styled exactly like reference) -->
+                  <div class="mt-2 border-2 border-black overflow-hidden">
+                    <table class="w-full text-[11px] border-collapse">
+                      <thead>
+                        <tr class="bg-slate-300 text-black border-b-2 border-black font-bold">
+                          <th class="py-1 px-2.5 text-left font-bold border-r border-black">Descripción</th>
+                          <th class="py-1 px-2 text-center font-bold border-r border-black w-14">Cant.</th>
+                          <th class="py-1 px-2.5 text-right font-bold border-r border-black w-24">Precio Uni.</th>
+                          <th class="py-1 px-2 text-center font-bold border-r border-black w-16">% Desc</th>
+                          <th class="py-1 px-2.5 text-right font-bold w-28">Sub Total</th>
+                        </tr>
+                      </thead>
+                      <tbody id="view-items-tbody">
+                        <!-- Dynamically rendered rows -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div> <!-- /doc-body-top -->
+
+                <!-- Pinned Bottom Section: Totals, Bank Details & Footer Watermark (Always at bottom of A4) -->
+                <div class="doc-body-bottom mt-auto pt-6 space-y-4">
+                  
+                  <!-- Bottom Totals & Bank Details Box -->
+                  <div class="grid grid-cols-12 gap-3 items-start">
+                    
+                    <!-- Left Box: Bank Transfer Info & Notes -->
+                    <div class="col-span-7 border-2 border-black p-2.5 text-[10px] space-y-1">
+                      <p class="font-bold uppercase text-black text-[11px] border-b border-black pb-0.5 mb-1">
+                        Datos para Transferencia / Pago:
+                      </p>
+                      <div id="view-bank-details" class="font-mono text-slate-800 whitespace-pre-line leading-relaxed">
+                        Alias: david.dev.mp
+                        Banco: Mercado Pago / Santander
+                      </div>
+                      <p class="text-[9px] text-slate-600 pt-1 italic">
+                        * Para confirmar y comenzar el trabajo se requiere la acreditación de la seña acordada.
+                      </p>
+                    </div>
+
+                    <!-- Right Box: Subtotal, Descuento, Total, Seña -->
+                    <div class="col-span-5 border-2 border-black p-2 text-right text-[11px]">
+                      <div class="flex justify-between py-0.5 font-bold">
+                        <span class="text-slate-700">SUBTOTAL:</span>
+                        <span id="view-subtotal-val" class="font-mono text-black">$ 207.332,00</span>
+                      </div>
+                      <div class="flex justify-between py-0.5 font-bold border-b border-slate-300">
+                        <span class="text-slate-700">DESCUENTO:</span>
+                        <span id="view-discount-val" class="font-mono text-black">$ 0,00</span>
+                      </div>
+                      <div class="flex justify-between py-1 text-sm font-black text-black">
+                        <span>TOTAL:</span>
+                        <span id="view-total-val" class="font-mono text-base">$ 207.332,00</span>
+                      </div>
+                      
+                      <!-- Advance / Seña calculation breakdown -->
+                      <div id="view-advance-box" class="pt-1.5 mt-1 border-t-2 border-black text-[10px] space-y-0.5 bg-slate-50 -mx-2 -mb-2 p-2">
+                        <div class="flex justify-between font-bold text-sky-800">
+                          <span>SEÑA / ANTICIPO (<span id="view-advance-pct">50</span>%):</span>
+                          <span id="view-advance-val" class="font-mono">$ 103.666,00</span>
+                        </div>
+                        <div class="flex justify-between font-semibold text-slate-700">
+                          <span>SALDO FINAL CONTRA ENTREGA:</span>
+                          <span id="view-balance-val" class="font-mono">$ 103.666,00</span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- Document Watermark / Bottom Credit -->
+                  <div class="mt-4 text-center text-[9px] text-slate-500 uppercase tracking-widest font-mono">
+                    Presupuesto Comercial • David Ramirez • https://davidramirezweb.vercel.app/
+                  </div>
+
+                </div> <!-- /doc-body-bottom -->
+
+            </div> <!-- /print-area -->
+          </div>
+        </div>
+
+        <!-- Mobile Return to Editor & Print Buttons (Visible on screens < lg) -->
+        <div class="w-full mt-4 lg:hidden flex items-center justify-center gap-3 no-print">
+          <button id="btn-back-to-editor" type="button" class="flex-1 py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-bold rounded-xl shadow-sm flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            <span>Volver al Formulario</span>
+          </button>
+          <button id="btn-print-mobile-view" type="button" class="flex-1 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-sm flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            <span>Imprimir PDF</span>
+          </button>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Mobile Sticky Bottom Bar (Visible on mobile when in Editor tab) -->
+  <aside id="mobile-bottom-bar" class="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2.5 z-20 shadow-lg flex items-center justify-between no-print transition-all">
+    <div class="leading-tight">
+      <span class="text-[10px] text-slate-500 uppercase font-semibold">Total a Cotizar</span>
+      <p id="mobile-bar-total" class="text-sm font-black font-mono text-slate-900">$ 207.332,00</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <button id="btn-mobile-preview-shortcut" type="button" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-sky-600 text-white hover:bg-sky-500 shadow-sm transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+        <span>Vista Previa</span>
+      </button>
+      <button id="btn-mobile-save-shortcut" type="button" class="p-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300 transition" title="Guardar presupuesto">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========================================== -->
+  <!-- MODAL: HISTORIAL PROTEGIDO POR PIN         -->
+  <!-- ========================================== -->
+  <div id="modal-history" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden no-print">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-slate-200 animate-in fade-in zoom-in duration-200">
+      
+      <!-- Modal Header -->
+      <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-white">Historial de Presupuestos</h3>
+            <p class="text-xs text-slate-400">Acceso protegido con clave PIN</p>
+          </div>
+        </div>
+        <button id="btn-close-history-modal" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- State A: PIN Gate (Locked) -->
+      <div id="history-locked-view" class="p-6 text-center space-y-4">
+        <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        </div>
+        <div>
+          <h4 id="pin-prompt-title" class="text-base font-bold text-slate-800">Ingresá tu PIN de Seguridad</h4>
+          <p id="pin-prompt-subtitle" class="text-xs text-slate-500 mt-0.5">El historial contiene tus clientes y presupuestos guardados</p>
+        </div>
+        
+        <div class="max-w-xs mx-auto space-y-2">
+          <input type="password" id="input-pin-auth" maxlength="6" inputmode="numeric" pattern="[0-9]*" class="w-full text-center tracking-widest text-2xl font-mono py-2 px-4 border-2 border-slate-300 rounded-xl focus:border-sky-500 focus:ring-4 focus:ring-sky-100 outline-none" placeholder="••••">
+          <p id="pin-error-msg" class="text-xs text-rose-500 font-semibold hidden">PIN incorrecto. Inténtalo de nuevo.</p>
+        </div>
+
+        <div class="flex justify-center gap-2">
+          <button id="btn-submit-pin" class="px-5 py-2 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs rounded-xl shadow transition">
+            Desbloquear
+          </button>
+        </div>
+        <p class="text-[11px] text-slate-400">PIN por defecto inicial: <span class="font-mono font-bold text-slate-600">1234</span> (podés cambiarlo una vez adentro)</p>
+      </div>
+
+      <!-- State B: Unlocked History Table -->
+      <div id="history-unlocked-view" class="p-4 space-y-3 hidden">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-2 pb-2 border-b border-slate-100">
+          <div class="w-full sm:w-64 relative">
+            <input type="text" id="input-search-history" placeholder="Buscar por cliente o Nº..." class="w-full text-xs pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+            <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <button id="btn-change-pin" class="text-xs text-slate-600 hover:text-sky-600 underline font-medium">Cambiar PIN</button>
+            <button id="btn-lock-history" class="px-2.5 py-1 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg border border-slate-300 transition">Bloquear</button>
+          </div>
+        </div>
+
+        <!-- History List Container -->
+        <div class="max-h-80 overflow-y-auto divide-y divide-slate-100" id="history-items-list">
+          <!-- Populated via JavaScript -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none no-print"></div>
+
+  <!-- App Script -->
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Contrato de Servicio Web - David Ramirez</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style id="style-contract-print-page">
+    @media print {
+      @page {
+        size: 210mm 297mm;
+        margin: 20mm 25mm 20mm 25mm;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+  <!-- Top App Navigation Bar -->
+  <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30 no-print">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
+      <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-indigo-400 font-bold text-base sm:text-lg flex-shrink-0">
+          C
+        </div>
+        <div class="min-w-0">
+          <h1 class="text-sm sm:text-base font-bold leading-tight tracking-tight flex items-center gap-1.5 truncate">
+            <span>Contrato</span>
+            <span class="hidden md:inline-block text-[10px] font-medium px-1.5 py-0.5 bg-indigo-500/20 text-indigo-300 rounded-full border border-indigo-500/30">Servicios Web</span>
+          </h1>
+          <p class="text-[11px] text-slate-400 leading-none mt-0.5 truncate hidden sm:block">David Ramirez • Web Developer</p>
+        </div>
+      </div>
+
+      <!-- Navigation Switcher: Presupuestos vs Contratos vs Recibos -->
+      <div class="flex items-center bg-slate-800 p-0.5 sm:p-1 rounded-xl border border-slate-700/80 flex-shrink-0">
+        <a href="index.html" class="px-2 sm:px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5" title="Ir a Presupuestos">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span class="hidden md:inline">Presupuestos</span>
+          <span class="md:hidden">Presup.</span>
+        </a>
+        <a href="contrato.html" class="px-2 sm:px-2.5 py-1 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm flex items-center gap-1.5 transition" title="Contrato de Servicio Web (Activo)">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          <span class="hidden md:inline">Contrato</span>
+          <span class="md:hidden">Contr.</span>
+        </a>
+        <a href="recibo.html" class="px-2 sm:px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5" title="Ir a Recibos de Pago">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+          <span class="hidden md:inline">Recibos</span>
+          <span class="md:hidden">Recib.</span>
+        </a>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+        <!-- New Contract Button -->
+        <button id="btn-new-contract" class="inline-flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white border border-slate-700 transition" title="Crear un nuevo contrato">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          <span class="hidden sm:inline">Nuevo</span>
+        </button>
+
+        <!-- Save Contract Button -->
+        <button id="btn-save-contract" class="inline-flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-500 shadow-sm transition" title="Guardar contrato en el historial">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+          <span class="hidden sm:inline">Guardar</span>
+        </button>
+
+        <!-- History Button (Protected with PIN) -->
+        <button id="btn-open-history" class="inline-flex items-center justify-center gap-1.5 px-2.5 py-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/30 transition" title="Ver historial protegido por PIN">
+          <svg class="w-4 h-4 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <span class="hidden sm:inline">Historial</span>
+          <span id="badge-history-count" class="bg-amber-400/20 text-amber-200 text-[10px] px-1.5 py-0.5 rounded-full font-mono">0</span>
+        </button>
+
+        <!-- Print / PDF Button -->
+        <button id="btn-print-main" class="inline-flex items-center justify-center gap-1.5 px-3 py-2 sm:px-3.5 sm:py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-500 shadow-md hover:shadow-lg transition transform active:scale-95" title="Imprimir o Descargar Contrato en PDF">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          <span class="hidden sm:inline">Imprimir / PDF</span>
+          <span class="sm:hidden font-bold">PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile View Selector Tabs (Visible on screens < lg) -->
+  <nav aria-label="Selector de vista móvil" class="lg:hidden bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 py-2 flex items-center justify-center gap-2 sticky top-16 z-20 no-print shadow-sm">
+    <button id="tab-btn-editor" type="button" class="flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-sm transition text-center flex items-center justify-center gap-1.5">
+      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+      <span>Formulario</span>
+    </button>
+    <button id="tab-btn-preview" type="button" class="flex-1 py-2 px-3 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition text-center flex items-center justify-center gap-1.5">
+      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      <span>Vista Previa A4</span>
+    </button>
+  </nav>
+
+  <!-- Main Content Area: Split View -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 lg:p-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- ========================================== -->
+      <!-- LEFT PANEL: CONTRACT FORM EDITOR          -->
+      <!-- ========================================== -->
+      <section id="panel-editor" class="w-full lg:col-span-5 space-y-5 no-print pb-24 lg:pb-0">
+        
+        <!-- Accordion 1: Mis Datos (El Desarrollador) -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden transition">
+          <div class="p-4 bg-slate-50/80 border-b border-slate-200 flex items-center justify-between cursor-pointer select-none" id="toggle-issuer-section">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">1</span>
+              <div>
+                <h3 class="text-sm font-bold text-slate-800">Mis Datos (El Desarrollador)</h3>
+                <p class="text-xs text-slate-500">Logo, DNI/CUIT, contacto y alias de cobro</p>
+              </div>
+            </div>
+            <button type="button" class="text-slate-400 hover:text-slate-600 p-1">
+              <svg id="issuer-arrow" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+          </div>
+
+          <div id="issuer-content" class="p-4 space-y-4">
+            <!-- Logo Uploader & Options -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5">Logo del Negocio / Marca</label>
+              <div class="flex items-center gap-3">
+                <div class="w-20 h-16 bg-slate-100 rounded-lg border border-dashed border-slate-300 flex items-center justify-center overflow-hidden relative group" id="logo-preview-box">
+                  <img id="logo-img-preview" src="assets/logo.png" alt="Logo preview" class="max-w-full max-h-full object-contain filter-dark">
+                </div>
+                <div class="flex-1 space-y-1.5">
+                  <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg border border-slate-300 transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <span>Subir nuevo logo</span>
+                    <input type="file" id="input-logo-file" accept="image/*" class="hidden">
+                  </label>
+                  <div class="flex items-center gap-2 mt-1">
+                    <label class="flex items-center gap-1.5 text-[11px] text-slate-600 cursor-pointer">
+                      <input type="checkbox" id="check-invert-logo" checked class="rounded text-indigo-600 focus:ring-indigo-500">
+                      <span>Ajustar a negro (para fondo blanco)</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Nombre Comercial / Marca</label>
+                <input type="text" id="input-issuer-trade" value="CHAVO" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="CHAVO">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Tu Nombre Completo</label>
+                <input type="text" id="input-issuer-name" value="David Ramirez" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="David Ramirez">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">DNI / CUIT del Desarrollador</label>
+                <input type="text" id="input-dev-dni" value="20-38491820-4" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-mono" placeholder="Ej. 20-38491820-4">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Teléfono / WhatsApp</label>
+                <input type="text" id="input-issuer-phone" value="+54 9 11 0000-0000" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="+54 9 11 ...">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Ciudad de Celebración</label>
+                <input type="text" id="input-dev-city" value="Buenos Aires" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ej. Buenos Aires">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Alias para Transferencias (Cláusula 2)</label>
+                <input type="text" id="input-dev-alias" value="david.dev.mp" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-mono" placeholder="david.dev.mp">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-medium text-slate-600 mb-1">Sitio Web / Portfolio</label>
+                <input type="text" id="input-issuer-web" value="https://davidramirezweb.vercel.app/" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="https://...">
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-end">
+              <button type="button" id="btn-save-issuer-defaults" class="px-3 py-1.5 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition border border-indigo-200 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span>Guardar mis datos por defecto</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Datos de El Cliente -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">2</span>
+              <div>
+                <h3 class="text-sm font-bold text-slate-800">Datos de El Cliente</h3>
+                <p class="text-xs text-slate-500">Nombre, DNI/CUIT y datos de contacto</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-medium text-slate-600 mb-1">Nombre / Razón Social del Cliente</label>
+              <input type="text" id="input-client-name" value="Castillo, Daniel" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-semibold" placeholder="Nombre completo o Empresa">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">DNI o CUIT del Cliente</label>
+              <input type="text" id="input-client-dni" value="20-35890133-7" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-mono" placeholder="DNI o CUIT">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Teléfono / WhatsApp</label>
+              <input type="text" id="input-client-phone" value="11 5544-3322" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="11 ...">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Correo Electrónico</label>
+              <input type="email" id="input-client-email" value="danielcastillo@gmail.com" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="cliente@correo.com">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Ciudad / Localidad</label>
+              <input type="text" id="input-client-city" value="Capital, La Rioja" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="Ciudad, Provincia">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Cláusulas y Condiciones del Servicio Web -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-3">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">3</span>
+              <div>
+                <h3 class="text-sm font-bold text-slate-800">Términos y Cláusulas del Contrato</h3>
+                <p class="text-xs text-slate-500">Proyecto, precio, plazos y condiciones</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] text-slate-500">
+            <span class="font-medium whitespace-nowrap">Plantillas:</span>
+            <button type="button" class="btn-preset-contract px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded whitespace-nowrap" data-preset="mantenimiento">Estándar ($45k)</button>
+            <button type="button" class="btn-preset-contract px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded whitespace-nowrap" data-preset="mantenimiento-horas">Integral ($85k)</button>
+            <button type="button" class="btn-preset-contract px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded whitespace-nowrap" data-preset="abono-usd">Abono USD ($150)</button>
+            <button type="button" class="btn-preset-contract px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded whitespace-nowrap" data-preset="hosting">Hosting & SSL ($30k)</button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Nº de Contrato</label>
+              <input type="text" id="input-contract-number" value="CONTR-2026-001" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-mono font-semibold" placeholder="CONTR-2026-001">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Fecha de Celebración</label>
+              <input type="date" id="input-contract-date" class="w-full text-xs px-2 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <!-- Cláusula 1: Proyecto web -->
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">1. Proyecto Web [nombre / URL]</label>
+              <input type="text" id="input-project-url" value="Sitio Web Comercial • https://davidramirezweb.vercel.app/" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-medium" placeholder="Ej. MiTiendaOnline.com / https://mitienda.com">
+            </div>
+
+            <!-- Cláusula 2: Precio y Pago -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">2. Monto Mensual ($)</label>
+              <div class="flex items-center gap-1">
+                <select id="select-contract-currency" class="text-xs font-bold border border-slate-300 rounded px-1.5 py-1.5 bg-slate-50 focus:ring-2 focus:ring-indigo-500">
+                  <option value="$">$ (ARS)</option>
+                  <option value="USD $">USD $</option>
+                  <option value="€">€ (EUR)</option>
+                </select>
+                <input type="number" id="input-monthly-fee" value="45000" min="0" step="500" class="flex-1 text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-mono font-bold" placeholder="45000">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Día límite de pago</label>
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs text-slate-500">Del 1 al</span>
+                <input type="number" id="input-pay-day" value="10" min="1" max="28" class="w-16 text-center text-xs px-2 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-mono font-bold">
+                <span class="text-xs text-slate-500">de cada mes</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Aviso para actualizar valor</label>
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs text-slate-500">Aviso previo de</span>
+                <input type="number" id="input-price-notice-days" value="15" min="1" max="60" class="w-16 text-center text-xs px-2 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-mono font-bold">
+                <span class="text-xs text-slate-500">días</span>
+              </div>
+            </div>
+
+            <!-- Cláusula 3: Falta de pago -->
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">3. Falta de pago (Suspensión)</label>
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs text-slate-500">Si pasan</span>
+                <input type="number" id="input-grace-days" value="10" min="1" max="30" class="w-16 text-center text-xs px-2 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-mono font-bold">
+                <span class="text-xs text-slate-500">días del vencimiento</span>
+              </div>
+            </div>
+
+            <!-- Cláusula 4: Baja -->
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">4. Baja / Terminación</label>
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs text-slate-500">Aviso con</span>
+                <input type="number" id="input-cancel-days" value="30" min="1" max="90" class="w-16 text-center text-xs px-2 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-mono font-bold">
+                <span class="text-xs text-slate-500">días de anticipación</span>
+              </div>
+            </div>
+
+            <!-- Cláusula 5: Propiedad y Traspaso -->
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">5. Traspaso / Rescate de Código</label>
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs text-slate-500">Equivalente a</span>
+                <input type="number" id="input-buyout-months" value="3" min="1" max="12" class="w-14 text-center text-xs px-2 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-mono font-bold">
+                <span class="text-xs text-slate-500">cuotas mensuales</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Opciones extras -->
+          <div class="pt-2 border-t border-slate-100 space-y-2">
+            <label class="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
+              <input type="checkbox" id="check-contract-signatures" checked class="rounded text-indigo-600 focus:ring-indigo-500">
+              <span>Incluir línea de firma al pie</span>
+            </label>
+            <div id="box-contract-sig-mode" class="pl-5 flex items-center gap-4 text-xs text-slate-600">
+              <label class="flex items-center gap-1.5 cursor-pointer">
+                <input type="radio" name="radio-contract-sig" value="dev" checked class="text-indigo-600 focus:ring-indigo-500">
+                <span class="font-medium text-slate-800">Solo Emisor (Desarrollador)</span>
+              </label>
+              <label class="flex items-center gap-1.5 cursor-pointer">
+                <input type="radio" name="radio-contract-sig" value="both" class="text-indigo-600 focus:ring-indigo-500">
+                <span>Ambos (Desarrollador y Cliente)</span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Section 4: Medidas y Configuración de Página (A4) -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-3">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">4</span>
+              <div>
+                <h3 class="text-sm font-bold text-slate-800">Medidas y Configuración de Página (A4)</h3>
+                <p class="text-xs text-slate-500">210 x 297 mm • Márgenes y Tipografía Arial</p>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">A4 Oficial</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Márgenes de Página</label>
+              <select id="select-contract-margins" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white font-medium">
+                <option value="standard" selected>Sup/Inf 2,0 cm • Izq/Der 2,5 cm (Recomendado)</option>
+                <option value="full25">2,5 cm en los 4 lados (Encuadernación)</option>
+                <option value="compact">Sup/Inf 1,8 cm • Izq/Der 2,0 cm</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Cuerpo del Texto (Arial)</label>
+              <select id="select-contract-font-size" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white font-medium">
+                <option value="11pt" selected>11 pt (Arial Estándar)</option>
+                <option value="12pt">12 pt (Arial Grande)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Interlineado</label>
+              <select id="select-contract-line-height" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white font-medium">
+                <option value="1.15">1,15 (Compacto)</option>
+                <option value="1.35" selected>1,35 (Equilibrado)</option>
+                <option value="1.50">1,50 (Amplio)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Specs Info Box -->
+          <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-[11px] text-slate-600 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-slate-700">Dimensiones de hoja:</span>
+              <span class="font-mono text-slate-900 font-bold">210 mm x 297 mm (21 x 29,7 cm)</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-slate-700">Márgenes encuadernación:</span>
+              <span class="text-slate-900">Izquierdo y derecho: 2,5 cm • Superior e inferior: 2,0 a 2,5 cm</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-slate-700">Tipografía:</span>
+              <span class="text-slate-900">Arial • Título 16 pt negrita • Cuerpo 11 a 12 pt</span>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ========================================== -->
+      <!-- RIGHT PANEL: LIVE SHEET PREVIEW (A4 Print)-->
+      <!-- ========================================== -->
+      <section id="panel-preview" class="w-full lg:col-span-7 flex flex-col items-center mobile-hidden">
+        
+        <div class="w-full flex flex-wrap items-center justify-between gap-2 mb-3 no-print px-1">
+          <div class="flex items-center gap-2">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Vista Previa Hoja A4 (210 x 297 mm)</span>
+          </div>
+
+          <!-- Zoom & Fit Controls -->
+          <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-0.5 shadow-sm text-xs">
+            <button id="btn-zoom-out" type="button" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 transition" title="Reducir zoom">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+            </button>
+            <button id="btn-zoom-fit" type="button" class="px-2 py-1 rounded text-[11px] font-bold bg-indigo-100 text-indigo-700 transition" title="Ajustar al ancho de la pantalla">
+              Ajustar
+            </button>
+            <button id="btn-zoom-100" type="button" class="px-2 py-1 rounded text-[11px] font-semibold text-slate-600 hover:bg-slate-100 transition" title="Tamaño real (100%)">
+              100%
+            </button>
+            <button id="btn-zoom-in" type="button" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 transition" title="Aumentar zoom">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="btn-print-secondary" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              <span>Imprimir / Guardar PDF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- The Printable Document Container Wrapper -->
+        <div id="preview-wrapper" class="w-full flex justify-center overflow-x-auto overflow-y-hidden pb-4 transition-all duration-150">
+          <div id="preview-scaler" class="transition-transform duration-150 origin-top flex-shrink-0">
+            
+            <!-- The Printable Document Container (A4 Printable Sheet: 210 x 297 mm) -->
+            <div id="print-area" class="a4-sheet contract-a4-sheet bg-white shadow-xl text-slate-900 select-text">
+              
+              <!-- Top Document Section: Header, Intro & 7 Clauses -->
+              <div class="doc-body-top space-y-3.5">
+                
+                <!-- Clean Unboxed Header -->
+                <div class="flex items-start justify-between pb-3 border-b border-slate-300">
+                  <div class="flex items-center gap-3">
+                    <div class="w-16 h-12 flex items-center justify-center flex-shrink-0">
+                      <img id="contract-view-issuer-logo" src="assets/logo.png" alt="Logo" class="max-h-12 max-w-full object-contain filter-dark">
+                    </div>
+                    <div>
+                      <h2 id="contract-view-issuer-trade" class="text-base font-bold tracking-tight uppercase text-black font-sans">CHAVO</h2>
+                      <p id="contract-view-issuer-name" class="text-xs font-bold text-slate-800 uppercase font-sans">David Ramirez</p>
+                      <p id="contract-view-issuer-subtitle" class="text-[10px] text-slate-500 font-sans">Web Developer</p>
+                    </div>
+                  </div>
+                  <div class="text-right text-[10px] text-slate-600 space-y-0.5 font-sans">
+                    <p class="font-bold text-black text-xs font-mono"><span id="contract-view-number">CONTR-2026-001</span></p>
+                    <p>Fecha: <span id="contract-view-date-short" class="font-mono font-bold text-black">14/09/2026</span></p>
+                    <p id="contract-view-issuer-location" class="uppercase">BUENOS AIRES, ARGENTINA</p>
+                    <p id="contract-view-issuer-phone" class="font-bold text-slate-800">TEL: +54 9 11 0000-0000</p>
+                    <p id="contract-view-issuer-web" class="text-slate-500">https://davidramirezweb.vercel.app/</p>
+                  </div>
+                </div>
+
+                <!-- Contract Title (16 pt bold Arial) -->
+                <div class="text-center pt-2 pb-1">
+                  <h1 class="contract-title-a4 text-black">CONTRATO DE SERVICIO WEB</h1>
+                </div>
+
+                <!-- Intro / Parties Paragraph -->
+                <p id="contract-view-intro" class="contract-body-text contract-clause pt-1 pb-1">
+                  En <strong id="contract-view-city" class="text-black">La Rioja</strong>, a <strong id="contract-view-date-full" class="text-black">14 de Septiembre de 2026</strong>, entre <strong id="contract-view-dev-name" class="text-black uppercase">David Ramirez</strong>, DNI/CUIT <strong id="contract-view-dev-dni" class="text-black font-mono">20-38491820-4</strong> (en adelante <strong>"EL DESARROLLADOR"</strong>) y <strong id="contract-view-client-name" class="text-black uppercase">Castillo, Daniel</strong>, DNI/CUIT <strong id="contract-view-client-dni" class="text-black font-mono">20-35890133-7</strong> (en adelante <strong>"EL CLIENTE"</strong>), acuerdan:
+                </p>
+
+                <!-- 7 Numbered Contract Clauses (Arial, 11-12pt, Interlineado 1.15-1.5, Justificado) -->
+                <div id="contract-view-clauses-wrapper" class="space-y-3 contract-body-text">
+                  
+                  <!-- Cláusula 1 -->
+                  <p class="contract-clause">
+                    <strong class="text-black">1. Servicio.</strong> EL DESARROLLADOR desarrolla y mantiene el proyecto web <strong id="contract-view-project" class="text-black">Sitio Web Comercial • https://davidramirezweb.vercel.app/</strong>, incluyendo hosting y certificado SSL. Cualquier cambio o función nueva fuera de lo acordado se cotiza aparte.
+                  </p>
+
+                  <!-- Cláusula 2 -->
+                  <p class="contract-clause">
+                    <strong class="text-black">2. Precio.</strong> EL CLIENTE abona <strong id="contract-view-fee" class="text-black font-mono font-bold">$ 45.000,00</strong> por mes, del 1 al <strong id="contract-view-pay-day" class="text-black font-bold">10</strong> de cada mes, por transferencia a alias <strong id="contract-view-alias" class="text-black font-mono font-bold">david.dev.mp</strong>. El valor puede actualizarse con aviso previo de <strong id="contract-view-price-notice" class="text-black font-bold">15</strong> días.
+                  </p>
+
+                  <!-- Cláusula 3 -->
+                  <p class="contract-clause">
+                    <strong class="text-black">3. Falta de pago.</strong> Si pasan <strong id="contract-view-grace-days" class="text-black font-bold">10</strong> días del vencimiento sin pagar, EL DESARROLLADOR puede suspender el sitio hasta que se regularice la deuda.
+                  </p>
+
+                  <!-- Cláusula 4 -->
+                  <p class="contract-clause">
+                    <strong class="text-black">4. Baja.</strong> Cualquiera de las partes puede terminar el contrato avisando por escrito (alcanza con email) con <strong id="contract-view-cancel-days" class="text-black font-bold">30</strong> días de anticipación. Lo ya pagado no se reembolsa.
+                  </p>
+
+                  <!-- Cláusula 5 -->
+                  <p class="contract-clause">
+                    <strong class="text-black">5. Propiedad del proyecto.</strong> El código y el proyecto son de EL DESARROLLADOR mientras el servicio esté vigente. Si EL CLIENTE quiere quedarse con el proyecto (código, y su traspaso a otro hosting), debe abonar previamente el equivalente a <strong id="contract-view-buyout" class="text-black font-bold">3 cuotas mensuales del servicio</strong>. Una vez pagado, EL DESARROLLADOR entrega el proyecto y deja de tener responsabilidad sobre él.
+                  </p>
+
+                  <!-- Cláusula 6 -->
+                  <p class="contract-clause">
+                    <strong class="text-black">6. Contenidos.</strong> EL CLIENTE asegura que los textos, imágenes y marcas que entrega son de su propiedad o puede usarlos.
+                  </p>
+
+                  <!-- Cláusula 7 -->
+                  <p class="contract-clause">
+                    <strong class="text-black">7. Responsabilidad.</strong> EL DESARROLLADOR no responde por caídas o fallas de terceros (Vercel, dominio, pasarelas de pago, etc.).
+                  </p>
+
+                </div> <!-- /clauses -->
+
+              </div> <!-- /doc-body-top -->
+
+              <!-- Pinned Bottom Section: Signatures & Footer (Always at bottom of A4) -->
+              <div class="doc-body-bottom mt-auto pt-6 space-y-4">
+                
+                <p id="contract-view-closing" class="contract-body-text font-bold text-slate-900">
+                  Firman dos ejemplares.
+                </p>
+
+                <!-- Signatures Box -->
+                <div id="contract-view-signatures-box" class="pt-6 pb-2">
+                  <div id="contract-view-signatures-wrap" class="flex justify-end">
+                    <div class="w-72 text-center font-sans" id="contract-view-sig-dev-col">
+                      <div class="border-t border-black pt-2">
+                        <p class="font-bold text-xs uppercase text-black" id="contract-view-sig-dev-name">DAVID RAMIREZ</p>
+                        <p class="text-[11px] text-slate-700 font-semibold uppercase">EL DESARROLLADOR</p>
+                        <p class="text-[10px] text-slate-600 font-mono">DNI/CUIT: <span id="contract-view-sig-dev-dni">20-38491820-4</span></p>
+                      </div>
+                    </div>
+                    <div class="w-72 text-center font-sans hidden" id="contract-view-sig-client-col">
+                      <div class="border-t border-black pt-2">
+                        <p class="font-bold text-xs uppercase text-black" id="contract-view-sig-client-name">CASTILLO, DANIEL</p>
+                        <p class="text-[11px] text-slate-700 font-semibold uppercase">EL CLIENTE</p>
+                        <p class="text-[10px] text-slate-600 font-mono">DNI/CUIT: <span id="contract-view-sig-client-dni">20-35890133-7</span></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Document Footer -->
+                <div class="text-center text-[9px] text-slate-400 uppercase tracking-widest font-mono border-t border-slate-200 pt-2">
+                  Contrato Web • David Ramirez • https://davidramirezweb.vercel.app/
+                </div>
+
+              </div> <!-- /doc-body-bottom -->
+
+            </div> <!-- /print-area -->
+          </div>
+        </div>
+
+        <!-- Mobile Return to Editor & Print Buttons (Visible on screens < lg) -->
+        <div class="w-full mt-4 lg:hidden flex items-center justify-center gap-3 no-print">
+          <button id="btn-back-to-editor" type="button" class="flex-1 py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-bold rounded-xl shadow-sm flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            <span>Volver al Formulario</span>
+          </button>
+          <button id="btn-print-mobile-view" type="button" class="flex-1 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-sm flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            <span>Imprimir PDF</span>
+          </button>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Mobile Sticky Bottom Bar (Visible on mobile when in Editor tab) -->
+  <aside id="mobile-bottom-bar" class="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2.5 z-20 shadow-lg flex items-center justify-between no-print transition-all">
+    <div class="leading-tight">
+      <span class="text-[10px] text-slate-500 uppercase font-semibold">Abono Mensual</span>
+      <p id="mobile-bar-total" class="text-sm font-black font-mono text-slate-900">$ 45.000,00</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <button id="btn-mobile-preview-shortcut" type="button" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-500 shadow-sm transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+        <span>Vista Previa</span>
+      </button>
+      <button id="btn-mobile-save-shortcut" type="button" class="p-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300 transition" title="Guardar contrato">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========================================== -->
+  <!-- MODAL: HISTORIAL DE CONTRATOS (CON PIN)    -->
+  <!-- ========================================== -->
+  <div id="modal-history" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden no-print">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-slate-200 animate-in fade-in zoom-in duration-200">
+      
+      <!-- Modal Header -->
+      <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-white">Historial de Contratos</h3>
+            <p class="text-xs text-slate-400">Acceso protegido con clave PIN</p>
+          </div>
+        </div>
+        <button id="btn-close-history-modal" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- State A: PIN Gate (Locked) -->
+      <div id="history-locked-view" class="p-6 text-center space-y-4">
+        <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        </div>
+        <div>
+          <h4 class="text-base font-bold text-slate-900">Ingresa tu PIN de Seguridad</h4>
+          <p class="text-xs text-slate-500 mt-1">Protegido para consultar tus contratos guardados (PIN por defecto: 1234)</p>
+        </div>
+        <div class="max-w-xs mx-auto space-y-2">
+          <input type="password" id="input-pin-auth" maxlength="6" inputmode="numeric" class="w-full text-center tracking-[0.5em] text-xl font-bold py-2.5 px-4 border-2 border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="••••">
+          <p id="pin-error-msg" class="text-xs font-semibold text-rose-600 hidden">PIN incorrecto. Intenta de nuevo.</p>
+        </div>
+        <div>
+          <button id="btn-submit-pin" class="w-full max-w-xs py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow transition">
+            Desbloquear Historial
+          </button>
+        </div>
+      </div>
+
+      <!-- State B: Unlocked View (List of Contracts) -->
+      <div id="history-unlocked-view" class="flex-1 flex flex-col min-h-0 hidden">
+        <!-- Subheader with search and controls -->
+        <div class="p-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+          <div class="relative flex-1 min-w-[180px]">
+            <input type="text" id="input-search-history" class="w-full text-xs pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Buscar por cliente, Nº o proyecto...">
+            <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button id="btn-change-pin" class="px-2.5 py-1.5 text-xs text-slate-600 hover:text-slate-800 hover:bg-slate-200 rounded-lg transition font-medium">
+              Cambiar PIN
+            </button>
+            <button id="btn-lock-history" class="px-2.5 py-1.5 text-xs text-rose-600 hover:bg-rose-50 rounded-lg transition font-medium">
+              Bloquear
+            </button>
+          </div>
+        </div>
+
+        <!-- History Items Scrollable Area -->
+        <div id="history-items-list" class="flex-1 overflow-y-auto p-3 space-y-2 divide-y divide-slate-100">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+  <!-- Logic Script -->
+  <script src="contrato.js"></script>
+</body>
+</html>
