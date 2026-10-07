@@ -1,5 +1,5 @@
 {
-  "version": 2,
-  "name": "presupuestos-david-ramirez",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
   "cleanUrls": true
 }
