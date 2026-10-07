@@ -44,89 +44,111 @@
 
   <!-- Top App Navigation Bar -->
   <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30 no-print">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
-      <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
-        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 font-bold text-base sm:text-lg flex-shrink-0">
-          R
+    <div class="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8">
+      
+      <!-- Top Row: Brand & Quick Action Buttons (Always fits smoothly on mobile) -->
+      <div class="h-13 sm:h-16 flex items-center justify-between gap-1.5 sm:gap-2">
+        <!-- Brand / Logo -->
+        <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
+          <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 font-bold text-base sm:text-lg flex-shrink-0">
+            R
+          </div>
+          <div class="min-w-0">
+            <h1 class="text-sm sm:text-base font-bold leading-tight tracking-tight flex items-center gap-1.5 truncate">
+              <span>Recibos</span>
+              <span class="hidden md:inline-block text-[10px] font-medium px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/30">Comprobante</span>
+            </h1>
+            <p class="text-[11px] text-slate-400 leading-none mt-0.5 truncate hidden sm:block">David Ramirez • Web Developer</p>
+          </div>
         </div>
-        <div class="min-w-0">
-          <h1 class="text-sm sm:text-base font-bold leading-tight tracking-tight flex items-center gap-1.5 truncate">
-            <span>Recibos de Pago</span>
-            <span class="hidden md:inline-block text-[10px] font-medium px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/30">Comprobante</span>
-          </h1>
-          <p class="text-[11px] text-slate-400 leading-none mt-0.5 truncate hidden sm:block">David Ramirez • Web Developer</p>
+
+        <!-- Navigation Switcher for Desktop (hidden on mobile) -->
+        <div class="hidden md:flex items-center bg-slate-800 p-1 rounded-xl border border-slate-700/80 flex-shrink-0">
+          <a href="index.html" class="px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5" title="Ir a Presupuestos">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span>Presupuestos</span>
+          </a>
+          <a href="contrato.html" class="px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5" title="Ir a Contratos">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <span>Contratos</span>
+          </a>
+          <a href="recibo.html" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-emerald-600 text-white shadow-sm flex items-center gap-1.5 transition" title="Recibos de Pago (Activo)">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+            <span>Recibos</span>
+          </a>
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+          <!-- New Receipt Button -->
+          <button id="btn-new-receipt" class="inline-flex items-center justify-center p-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white border border-slate-700 transition" title="Crear un recibo nuevo">
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span class="hidden sm:inline ml-1">Nuevo</span>
+          </button>
+
+          <!-- Save Receipt Button -->
+          <button id="btn-save-receipt" class="inline-flex items-center justify-center p-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-500 shadow-sm transition" title="Guardar recibo en el historial">
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+            <span class="hidden sm:inline ml-1">Guardar</span>
+          </button>
+
+          <!-- History Button (Protected by PIN) -->
+          <button id="btn-open-history" class="inline-flex items-center justify-center gap-1 px-2 py-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/30 transition" title="Ver historial protegido por PIN">
+            <svg class="w-4 h-4 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            <span class="hidden sm:inline ml-0.5">Historial</span>
+            <span id="history-badge" class="bg-amber-400/20 text-amber-200 text-[10px] px-1.5 py-0.5 rounded-full font-mono">0</span>
+          </button>
+
+          <!-- Print / PDF Button -->
+          <button id="btn-print" class="inline-flex items-center justify-center gap-1 px-2.5 py-2 sm:px-3.5 sm:py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-500 shadow-md transition transform active:scale-95" title="Imprimir o Descargar Recibo en PDF">
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            <span class="hidden sm:inline ml-0.5">Imprimir / PDF</span>
+            <span class="sm:hidden font-bold">PDF</span>
+          </button>
         </div>
       </div>
 
-      <!-- Navigation Tabs: Presupuestos vs Contratos vs Recibos -->
-      <div class="flex items-center bg-slate-800 p-0.5 sm:p-1 rounded-xl border border-slate-700/80 flex-shrink-0">
-        <a href="index.html" class="px-2 sm:px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5" title="Ir a Presupuestos">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          <span class="hidden md:inline">Presupuestos</span>
-          <span class="md:hidden">Presup.</span>
-        </a>
-        <a href="contrato.html" class="px-2 sm:px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5" title="Ir a Contratos">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-          <span class="hidden md:inline">Contratos</span>
-          <span class="md:hidden">Contr.</span>
-        </a>
-        <a href="recibo.html" class="px-2 sm:px-2.5 py-1 text-xs font-bold rounded-lg bg-emerald-600 text-white shadow-sm flex items-center gap-1.5 transition" title="Recibos de Pago (Activo)">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
-          <span class="hidden md:inline">Recibos</span>
-          <span class="md:hidden">Recib.</span>
-        </a>
+      <!-- Mobile Document Switcher: 3 columns, full width (md:hidden) -->
+      <div class="md:hidden pb-2 pt-0.5 border-t border-slate-800/80">
+        <div class="grid grid-cols-3 gap-1 bg-slate-950/70 p-1 rounded-xl border border-slate-800">
+          <a href="index.html" class="py-1 px-1 text-center text-[11px] font-semibold rounded-lg text-slate-300 hover:text-white transition flex items-center justify-center gap-1">
+            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span>Presupuestos</span>
+          </a>
+          <a href="contrato.html" class="py-1 px-1 text-center text-[11px] font-semibold rounded-lg text-slate-300 hover:text-white transition flex items-center justify-center gap-1">
+            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <span>Contratos</span>
+          </a>
+          <a href="recibo.html" class="py-1 px-1 text-center text-[11px] font-bold rounded-lg bg-emerald-600 text-white shadow-sm flex items-center justify-center gap-1">
+            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+            <span>Recibos</span>
+          </a>
+        </div>
       </div>
 
-      <!-- Quick Action Buttons -->
-      <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-        <!-- New Receipt Button -->
-        <button id="btn-new-receipt" class="inline-flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white border border-slate-700 transition" title="Crear un recibo nuevo">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-          <span class="hidden sm:inline">Nuevo</span>
-        </button>
-
-        <!-- Save / History Button -->
-        <button id="btn-save-receipt" class="inline-flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white border border-slate-700 transition" title="Guardar recibo en el historial">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-          <span class="hidden sm:inline">Guardar</span>
-        </button>
-
-        <!-- History Button (Protected by PIN) -->
-        <button id="btn-open-history" class="relative inline-flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white border border-slate-700 transition" title="Ver historial de recibos emitidos">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          <span class="hidden sm:inline">Historial</span>
-          <span id="history-badge" class="hidden absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 text-white font-bold text-[9px] flex items-center justify-center ring-2 ring-slate-900">0</span>
-        </button>
-
-        <!-- Main Print Button -->
-        <button id="btn-print" class="inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-500 active:bg-emerald-700 shadow-sm transition" title="Imprimir o guardar como PDF">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-          <span class="hidden xs:inline">Imprimir PDF</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Mobile Tab Switcher (Visible only on screens < lg) -->
-    <div class="lg:hidden bg-slate-800 border-t border-slate-700/60 px-3 py-2 flex items-center justify-center gap-2">
-      <button id="tab-btn-editor" type="button" class="flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm transition text-center flex items-center justify-center gap-1.5">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-        <span>Editar Recibo</span>
-      </button>
-      <button id="tab-btn-preview" type="button" class="flex-1 py-2 px-3 text-xs font-semibold rounded-lg bg-slate-700 text-slate-300 hover:text-white transition text-center flex items-center justify-center gap-1.5">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-        <span>Ver Hoja A4</span>
-      </button>
     </div>
   </header>
 
+  <!-- Mobile View Selector Tabs (Visible on screens < lg) -->
+  <nav aria-label="Selector de vista móvil" class="lg:hidden bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 py-2 flex items-center justify-center gap-2 sticky top-[88px] md:top-16 z-20 no-print shadow-sm">
+    <button id="tab-btn-editor" type="button" class="flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm transition text-center flex items-center justify-center gap-1.5">
+      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+      <span>Formulario</span>
+    </button>
+    <button id="tab-btn-preview" type="button" class="flex-1 py-2 px-3 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition text-center flex items-center justify-center gap-1.5">
+      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      <span>Vista Previa A4</span>
+    </button>
+  </nav>
+
   <!-- Main Responsive Grid Layout -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 lg:p-6 mb-20 lg:mb-6">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
+  <main class="flex-1 max-w-7xl w-full min-w-0 mx-auto p-3 sm:p-6 lg:p-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start w-full min-w-0">
       
       <!-- ========================================== -->
       <!-- LEFT PANEL: EDIT FORM (Responsive Editor)  -->
       <!-- ========================================== -->
-      <section id="panel-editor" class="w-full lg:col-span-5 space-y-4">
+      <section id="panel-editor" class="w-full min-w-0 lg:col-span-5 space-y-4 no-print pb-24 lg:pb-0">
         
         <!-- Section 1: Datos del Emisor (Perfil Compartido) -->
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
@@ -379,7 +401,7 @@
       <!-- ========================================== -->
       <!-- RIGHT PANEL: LIVE SHEET PREVIEW (A4 Print)-->
       <!-- ========================================== -->
-      <section id="panel-preview" class="w-full lg:col-span-7 flex flex-col items-center mobile-hidden">
+      <section id="panel-preview" class="w-full min-w-0 lg:col-span-7 flex flex-col items-center mobile-hidden">
         
         <div class="w-full flex flex-wrap items-center justify-between gap-2 mb-3 no-print px-1">
           <div class="flex items-center gap-2">

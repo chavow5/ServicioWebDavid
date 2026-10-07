@@ -580,7 +580,7 @@ function switchMobileTab(tab) {
       tabEditor.className = 'flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm transition text-center flex items-center justify-center gap-1.5';
     }
     if (tabPreview) {
-      tabPreview.className = 'flex-1 py-2 px-3 text-xs font-semibold rounded-lg bg-slate-700 text-slate-300 hover:text-white transition text-center flex items-center justify-center gap-1.5';
+      tabPreview.className = 'flex-1 py-2 px-3 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition text-center flex items-center justify-center gap-1.5';
     }
     if (panelEditor) panelEditor.classList.remove('mobile-hidden');
     if (panelPreview) panelPreview.classList.add('mobile-hidden');
@@ -591,7 +591,7 @@ function switchMobileTab(tab) {
       tabPreview.className = 'flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm transition text-center flex items-center justify-center gap-1.5';
     }
     if (tabEditor) {
-      tabEditor.className = 'flex-1 py-2 px-3 text-xs font-semibold rounded-lg bg-slate-700 text-slate-300 hover:text-white transition text-center flex items-center justify-center gap-1.5';
+      tabEditor.className = 'flex-1 py-2 px-3 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition text-center flex items-center justify-center gap-1.5';
     }
     if (panelEditor) panelEditor.classList.add('mobile-hidden');
     if (panelPreview) panelPreview.classList.remove('mobile-hidden');
@@ -1046,12 +1046,7 @@ function updateHistoryBadge() {
   const history = getSavedReceipts();
   const badge = document.getElementById('history-badge');
   if (badge) {
-    if (history.length > 0) {
-      badge.textContent = history.length;
-      badge.classList.remove('hidden');
-    } else {
-      badge.classList.add('hidden');
-    }
+    badge.textContent = history.length;
   }
 }
 
