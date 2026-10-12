@@ -17,6 +17,7 @@ const DEFAULT_ISSUER = {
   trade: 'CHAVO',
   name: 'David Ramirez',
   subtitle: 'Web Developer',
+  documentLabel: 'Servicios Profesionales Freelance',
   phone: '+54 9 3804 201334',
   dni: '43416310',
   web: 'https://davidramirezweb.vercel.app/',
@@ -48,6 +49,7 @@ const DEFAULT_QUOTE = {
     {
       id: 1,
       description: 'MDO - DESARROLLO DE SITIO WEB RESPONSIVE (REACT + TAILWIND CSS) Y DEPLOY',
+      observations: '',
       quantity: 1,
       unitPrice: 207332,
       discount: 0
@@ -102,6 +104,7 @@ function loadSavedIssuer() {
   setVal('input-issuer-trade', issuerState.trade);
   setVal('input-issuer-name', issuerState.name);
   setVal('input-issuer-subtitle', issuerState.subtitle);
+  setVal('input-issuer-document-label', issuerState.documentLabel);
   setVal('input-issuer-phone', issuerState.phone);
   setVal('input-issuer-web', issuerState.web);
   setVal('input-issuer-location', issuerState.location);
@@ -196,6 +199,7 @@ function renderIssuerSection() {
   setElText('view-issuer-trade', issuerState.trade);
   setElText('view-issuer-name', issuerState.name);
   setElText('view-issuer-subtitle', issuerState.subtitle);
+  setElText('view-issuer-document-label', issuerState.documentLabel);
   setElText('view-issuer-phone', 'TEL: ' + issuerState.phone);
   setElText('view-issuer-web', issuerState.web);
   setElText('view-issuer-location', (issuerState.location || '').toUpperCase());
@@ -239,7 +243,9 @@ function renderClientSection() {
   setElText('view-client-email', quoteState.client.email || '-');
   setElText('view-client-address', quoteState.client.address || '-');
   setElText('view-client-city', quoteState.client.city || '-');
-  setElText('view-quote-notes', quoteState.notes || '-');
+  setElText('view-quote-notes', quoteState.notes || '');
+  const notesBox = document.getElementById('view-quote-notes-box');
+  if (notesBox) notesBox.classList.toggle('hidden', !quoteState.notes?.trim());
 }
 
 function renderItemsTable() {
@@ -263,6 +269,10 @@ function renderItemsTable() {
       <div>
         <input type="text" value="${escapeHtml(item.description)}" class="item-desc-input w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 font-medium" data-index="${index}" placeholder="Descripción del servicio o producto...">
       </div>
+      <div>
+        <label class="block text-[10px] font-medium text-slate-500 mb-0.5">Observaciones del ítem</label>
+        <textarea rows="2" class="item-observations-input w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500" data-index="${index}" placeholder="Ej.: Incluye soporte técnico...">${escapeHtml(item.observations || '')}</textarea>
+      </div>
       <div class="grid grid-cols-2 sm:grid-cols-12 gap-2.5 items-end">
         <div class="col-span-1 sm:col-span-3">
           <label class="block text-[10px] font-medium text-slate-500 mb-0.5">Cant.</label>
@@ -278,14 +288,17 @@ function renderItemsTable() {
         </div>
         <div class="col-span-1 sm:col-span-3 text-right bg-slate-100/70 sm:bg-transparent p-1.5 sm:p-0 rounded-lg">
           <label class="block text-[10px] font-medium text-slate-500 mb-0.5">Subtotal</label>
-          <span class="text-xs font-mono font-bold text-slate-800 leading-tight block truncate">${formatCurrency(rowSubtotal, quoteState.currency)}</span>
+          <span data-index="${index}" class="item-subtotal text-xs font-mono font-bold text-slate-800 leading-tight block truncate">${formatCurrency(rowSubtotal, quoteState.currency)}</span>
         </div>
       </div>
     `;
     editorContainer.appendChild(div);
   });
 
-  // 2. Render in Printed Sheet Table
+  renderPrintedItemsTable();
+}
+
+function renderPrintedItemsTable() {
   const tbody = document.getElementById('view-items-tbody');
   if (!tbody) return;
   tbody.innerHTML = '';
@@ -304,7 +317,10 @@ function renderItemsTable() {
     const tr = document.createElement('tr');
     tr.className = 'border-b border-black text-[11px]';
     tr.innerHTML = `
-      <td class="py-1 px-2.5 text-left border-r border-black font-medium leading-tight">${escapeHtml(item.description)}</td>
+      <td class="py-1 px-2.5 text-left border-r border-black leading-tight">
+        <div class="font-medium">${escapeHtml(item.description)}</div>
+        ${item.observations?.trim() ? `<div class="mt-0.5 text-[10px] text-slate-600 whitespace-pre-line">${escapeHtml(item.observations)}</div>` : ''}
+      </td>
       <td class="py-1 px-2 text-center border-r border-black font-mono">${Number(item.quantity).toFixed(2).replace('.', ',')}</td>
       <td class="py-1 px-2.5 text-right border-r border-black font-mono">${formatCurrency(item.unitPrice, '').trim()}</td>
       <td class="py-1 px-2 text-center border-r border-black font-mono">${item.discount ? Number(item.discount).toFixed(2).replace('.', ',') : '0,00'}</td>
@@ -565,13 +581,14 @@ function setupEventListeners() {
   }
 
   // Issuer Inputs Live Update
-  ['input-issuer-trade', 'input-issuer-name', 'input-issuer-subtitle', 'input-issuer-phone', 'input-issuer-web', 'input-issuer-location', 'input-issuer-bank'].forEach(id => {
+  ['input-issuer-trade', 'input-issuer-name', 'input-issuer-subtitle', 'input-issuer-document-label', 'input-issuer-phone', 'input-issuer-web', 'input-issuer-location', 'input-issuer-bank'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener('input', () => {
       issuerState.trade = document.getElementById('input-issuer-trade')?.value || '';
       issuerState.name = document.getElementById('input-issuer-name')?.value || '';
       issuerState.subtitle = document.getElementById('input-issuer-subtitle')?.value || '';
+      issuerState.documentLabel = document.getElementById('input-issuer-document-label')?.value || '';
       issuerState.phone = document.getElementById('input-issuer-phone')?.value || '';
       issuerState.web = document.getElementById('input-issuer-web')?.value || '';
       issuerState.location = document.getElementById('input-issuer-location')?.value || '';
@@ -596,6 +613,7 @@ function setupEventListeners() {
       quoteState.currency = e.target.value;
       renderItemsTable();
       renderTotals();
+      autoSaveDraft();
     });
   }
 
@@ -613,6 +631,7 @@ function setupEventListeners() {
       el.addEventListener('input', (e) => {
         quoteState[key] = e.target.value;
         fn();
+        autoSaveDraft();
       });
     }
   });
@@ -632,6 +651,7 @@ function setupEventListeners() {
       // Keep last client saved for cross-page sync with Contratos
       localStorage.setItem(STORAGE_KEYS.LAST_CLIENT, JSON.stringify(quoteState.client));
       renderClientSection();
+      autoSaveDraft();
     });
   });
 
@@ -641,6 +661,7 @@ function setupEventListeners() {
     inputDiscount.addEventListener('input', (e) => {
       quoteState.globalDiscount = Number(e.target.value) || 0;
       renderTotals();
+      autoSaveDraft();
     });
   }
 
@@ -649,6 +670,7 @@ function setupEventListeners() {
     inputAdvance.addEventListener('input', (e) => {
       quoteState.advancePct = Number(e.target.value) || 50;
       renderTotals();
+      autoSaveDraft();
     });
   }
 
@@ -657,6 +679,7 @@ function setupEventListeners() {
     checkAdvance.addEventListener('change', (e) => {
       quoteState.showAdvance = e.target.checked;
       renderTotals();
+      autoSaveDraft();
     });
   }
 
@@ -667,12 +690,14 @@ function setupEventListeners() {
       quoteState.items.push({
         id: Date.now(),
         description: 'Nuevo servicio / ítem',
+        observations: '',
         quantity: 1,
         unitPrice: 0,
         discount: 0
       });
       renderItemsTable();
       renderTotals();
+      autoSaveDraft();
     });
   }
 
@@ -684,12 +709,14 @@ function setupEventListeners() {
       quoteState.items.push({
         id: Date.now(),
         description: desc,
+        observations: '',
         quantity: 1,
         unitPrice: price,
         discount: 0
       });
       renderItemsTable();
       renderTotals();
+      autoSaveDraft();
       showToast(`Ítem "${desc}" agregado`, 'info');
     });
   });
@@ -703,6 +730,8 @@ function setupEventListeners() {
 
       if (e.target.classList.contains('item-desc-input')) {
         quoteState.items[idx].description = e.target.value;
+      } else if (e.target.classList.contains('item-observations-input')) {
+        quoteState.items[idx].observations = e.target.value;
       } else if (e.target.classList.contains('item-qty-input')) {
         quoteState.items[idx].quantity = Number(e.target.value) || 0;
       } else if (e.target.classList.contains('item-price-input')) {
@@ -711,8 +740,15 @@ function setupEventListeners() {
         quoteState.items[idx].discount = Number(e.target.value) || 0;
       }
 
-      renderItemsTable();
+      const subtotalEl = editorContainer.querySelector(`.item-subtotal[data-index="${idx}"]`);
+      if (subtotalEl) {
+        const item = quoteState.items[idx];
+        const subtotal = item.quantity * item.unitPrice * (1 - item.discount / 100);
+        subtotalEl.textContent = formatCurrency(subtotal, quoteState.currency);
+      }
+      renderPrintedItemsTable();
       renderTotals();
+      autoSaveDraft();
     });
 
     editorContainer.addEventListener('click', (e) => {
@@ -724,6 +760,7 @@ function setupEventListeners() {
       quoteState.items.splice(idx, 1);
       renderItemsTable();
       renderTotals();
+      autoSaveDraft();
     });
   }
 
@@ -747,6 +784,14 @@ function setupEventListeners() {
 // Print Action
 // -------------------------------------------------------------
 function triggerPrint() {
+  const originalTitle = document.title;
+  const clientName = quoteState.client?.name?.trim();
+  if (clientName) {
+    document.title = `Presupuesto - ${clientName} - ${quoteState.number}`;
+    window.addEventListener('afterprint', () => {
+      document.title = originalTitle;
+    }, { once: true });
+  }
   window.print();
 }
 
@@ -782,6 +827,7 @@ function createNewQuote() {
         {
           id: Date.now(),
           description: '',
+          observations: '',
           quantity: 1,
           unitPrice: 0,
           discount: 0
