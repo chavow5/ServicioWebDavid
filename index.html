@@ -198,6 +198,10 @@
                 <input type="text" id="input-issuer-subtitle" value="Web Developer" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" placeholder="Web Developer">
               </div>
               <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Texto del encabezado del presupuesto</label>
+                <input type="text" id="input-issuer-document-label" value="Servicios Profesionales Freelance" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" placeholder="Servicios Profesionales Freelance">
+              </div>
+              <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Teléfono / WhatsApp</label>
                 <input type="text" id="input-issuer-phone" value="+54 9 3804 201334" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" placeholder="+54 9 3804 201334">
               </div>
@@ -433,7 +437,7 @@
                         </p>
                       </div>
                       <div class="text-[10px] text-slate-700 space-y-0.5 mt-2">
-                        <p class="font-semibold">SERVICIOS PROFESIONALES FREELANCE</p>
+                        <p id="view-issuer-document-label" class="font-semibold">SERVICIOS PROFESIONALES FREELANCE</p>
                         <p>VALIDEZ HASTA: <span id="view-quote-due-date" class="font-mono font-bold text-black">29/09/2026</span></p>
                       </div>
                     </div>
@@ -476,11 +480,6 @@
                       </div>
                     </div>
 
-                    <!-- Observaciones -->
-                    <div class="mt-1.5 pt-1 border-t border-dashed border-slate-300 text-[10px]">
-                      <span class="font-bold text-black uppercase">OBSERVACIONES:</span>
-                      <span id="view-quote-notes" class="text-slate-700 ml-1">Desarrollo de sitio web responsive y optimización general para comercio.</span>
-                    </div>
                   </div>
 
                   <!-- Items Table (Styled exactly like reference) -->
@@ -505,6 +504,11 @@
                 <!-- Pinned Bottom Section: Totals, Bank Details & Footer Watermark (Always at bottom of A4) -->
                 <div class="doc-body-bottom mt-auto pt-6 space-y-4">
                   
+                  <div id="view-quote-notes-box" class="border border-black p-2.5 text-[10px]">
+                    <p class="font-bold uppercase text-black mb-0.5">Observaciones:</p>
+                    <p id="view-quote-notes" class="text-slate-700 whitespace-pre-line">Desarrollo de sitio web responsive y optimización general para comercio.</p>
+                  </div>
+
                   <!-- Bottom Totals & Bank Details Box -->
                   <div class="grid grid-cols-12 gap-3 items-start">
                     
@@ -518,7 +522,7 @@
                         Banco: Mercado Pago / Santander
                       </div>
                       <p class="text-[9px] text-slate-600 pt-1 italic">
-                        * Para confirmar y comenzar el trabajo se requiere la acreditación de la seña acordada.
+                        * Para confirmar y comenzar el trabajo se requiere la aprobación después del envío del presupuesto.
                       </p>
                     </div>
 
